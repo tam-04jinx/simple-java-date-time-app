@@ -1,7 +1,5 @@
 package com.example.datetime;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,8 +14,8 @@ public class DateTimeController {
         ZonedDateTime now = ZonedDateTime.now();
 
         return new DateTimeResponse(
-                LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
-                LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")),
+                now.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
+                now.format(DateTimeFormatter.ofPattern("hh:mm:ss a")),
                 now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                 now.getZone().toString()
         );
