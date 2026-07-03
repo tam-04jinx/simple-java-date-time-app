@@ -10,15 +10,15 @@
     <main class="page">
         <section class="card">
             <p class="eyebrow">Spring Boot + Frontend</p>
-            <h1>Current Date & Time</h1>
+            <h1>World Clock</h1>
 
             <div class="datetime-panel">
                 <div>
-                    <span class="label">Date</span>
+                    <span class="label">Server Date</span>
                     <strong id="date">Loading...</strong>
                 </div>
                 <div>
-                    <span class="label">Time</span>
+                    <span class="label">Server Time</span>
                     <strong id="time">Loading...</strong>
                 </div>
             </div>
@@ -26,6 +26,9 @@
             <p class="timezone">
                 Server timezone: <span id="timezone">Loading...</span>
             </p>
+
+            <h2>Time Zones</h2>
+            <div id="timezone-list" class="timezone-grid" aria-live="polite"></div>
 
             <button id="refresh-button" type="button">Refresh Now</button>
         </section>
