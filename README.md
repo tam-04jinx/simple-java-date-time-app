@@ -39,13 +39,12 @@ Example response:
 }
 ```
 
-## Create a GitHub Repository from Terminal
+The displayed date and time come from the Java server, not directly from the user's browser clock.
+
+## Build and Test
 
 ```bash
-git init
-git add .
-git commit -m "Initial Java date time app"
-gh repo create simple-java-date-time-app --public --source=. --remote=origin --push
+mvn clean verify
 ```
 
-Use `--private` instead of `--public` if you want a private repository.
+A GitHub Actions workflow is included to run the Maven build on pushes and pull requests to `master` or `main`.
