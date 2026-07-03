@@ -6,9 +6,11 @@ A simple Java Spring Boot application with a frontend that displays the current 
 
 - Java 17
 - Spring Boot
+- Spring Boot Actuator
 - HTML
 - CSS
 - JavaScript
+- Docker
 
 ## Run Locally
 
@@ -28,18 +30,11 @@ http://localhost:8080
 GET /api/datetime
 ```
 
-Example response:
+## Health Check
 
-```json
-{
-  "date": "Friday, July 3, 2026",
-  "time": "01:30:22 PM",
-  "dateTime": "2026-07-03T13:30:22-05:00",
-  "timeZone": "America/Chicago"
-}
+```text
+GET /actuator/health
 ```
-
-The displayed date and time come from the Java server, not directly from the user's browser clock.
 
 ## Build and Test
 
@@ -47,4 +42,14 @@ The displayed date and time come from the Java server, not directly from the use
 mvn clean verify
 ```
 
-A GitHub Actions workflow is included to run the Maven build on pushes and pull requests to `master` or `main`.
+## Run with Docker
+
+```bash
+docker compose up --build
+```
+
+The application reads the `PORT` environment variable when one is provided. Otherwise it defaults to `8080`.
+
+## Repository Governance
+
+This repository includes CODEOWNERS, issue templates, a pull request template, a license, CI validation, and a manual release workflow.
