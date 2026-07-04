@@ -27,14 +27,20 @@
                 Server timezone: <span id="timezone">Loading...</span>
             </p>
 
-            <h2>Click a city on the map</h2>
+            <div class="city-picker">
+                <label class="label" for="city-select">Choose cities to show on the map</label>
+                <select id="city-select" multiple size="8" aria-describedby="city-help"></select>
+                <p id="city-help" class="timezone">Hold Cmd on Mac or Ctrl on Windows to select multiple cities.</p>
+            </div>
+
+            <h2>Selected cities on the map</h2>
             <div id="world-map" class="world-map" aria-label="Interactive world map"></div>
 
             <section id="selected-time" class="selected-time" aria-live="polite">
                 Select a city on the map to see the local time.
             </section>
 
-            <h2>Major Time Zones</h2>
+            <h2>Selected Time Zones</h2>
             <div id="timezone-list" class="timezone-grid" aria-live="polite"></div>
 
             <button id="refresh-button" type="button">Refresh Now</button>
