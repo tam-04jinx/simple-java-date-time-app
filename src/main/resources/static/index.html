@@ -28,11 +28,19 @@
 
             <h2>Click a city</h2>
             <div class="world-map" aria-label="Clickable world clock map">
-                <div class="map-blob north-america"></div>
-                <div class="map-blob south-america"></div>
-                <div class="map-blob europe-africa"></div>
-                <div class="map-blob asia"></div>
-                <div class="map-blob australia"></div>
+                <svg class="world-map-svg" viewBox="0 0 1000 500" role="img" aria-label="World map silhouette">
+                    <path class="continent" d="M117 116 L158 89 L221 82 L277 105 L310 144 L300 184 L250 205 L220 244 L181 236 L153 199 L107 184 L82 151 Z" />
+                    <path class="continent" d="M252 252 L291 282 L302 342 L276 405 L240 458 L214 420 L206 359 L182 318 L203 279 Z" />
+                    <path class="continent" d="M455 110 L498 92 L545 112 L570 151 L538 181 L487 174 L446 148 Z" />
+                    <path class="continent" d="M492 180 L552 190 L590 239 L579 314 L544 400 L501 379 L474 310 L450 248 Z" />
+                    <path class="continent" d="M596 112 L672 83 L765 98 L837 139 L883 196 L845 244 L764 232 L715 270 L656 239 L609 197 Z" />
+                    <path class="continent" d="M792 316 L867 333 L909 376 L873 417 L807 405 L761 361 Z" />
+                    <path class="continent" d="M395 79 L434 59 L468 74 L443 101 Z" />
+                    <path class="continent" d="M515 430 L568 437 L603 459 L551 474 Z" />
+                    <path class="map-line" d="M0 250 H1000" />
+                    <path class="map-line" d="M500 0 V500" />
+                    <path class="map-line faint" d="M250 0 V500 M750 0 V500 M0 125 H1000 M0 375 H1000" />
+                </svg>
                 <div id="map-markers"></div>
             </div>
 
