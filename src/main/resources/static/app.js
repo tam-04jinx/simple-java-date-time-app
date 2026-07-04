@@ -2,21 +2,35 @@ const dateElement = document.querySelector("#date");
 const timeElement = document.querySelector("#time");
 const timezoneElement = document.querySelector("#timezone");
 const timezoneListElement = document.querySelector("#timezone-list");
-const mapMarkersElement = document.querySelector("#map-markers");
 const selectedTimeElement = document.querySelector("#selected-time");
 const refreshButton = document.querySelector("#refresh-button");
 
-const cityPositions = {
-    Austin: { left: 20, top: 43 },
-    "New York": { left: 28, top: 36 },
-    London: { left: 46, top: 31 },
-    Hyderabad: { left: 68, top: 49 },
-    Tokyo: { left: 82, top: 42 },
-    Sydney: { left: 84, top: 72 }
+const cityCoordinates = {
+    Austin: [30.2672, -97.7431],
+    "New York": [40.7128, -74.0060],
+    London: [51.5074, -0.1278],
+    Hyderabad: [17.3850, 78.4867],
+    Tokyo: [35.6762, 139.6503],
+    Sydney: [-33.8688, 151.2093]
 };
 
 let latestTimeZones = [];
 let selectedCity = "Austin";
+let worldMap;
+let cityMarkers = {};
+
+function initializeMap() {
+    worldMap = L.map("world-map", {
+        worldCopyJump: true,
+        scrollWheelZoom: false
+    }).setView([20, 10], 2);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 6,
+        minZoom: 2,
+        attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(worldMap);
+}
 
 async function loadDateTime() {
     try {
@@ -49,32 +63,25 @@ async function loadDateTime() {
 }
 
 function renderMapMarkers(timeZones) {
-    mapMarkersElement.innerHTML = timeZones
-        .filter(timeZone => cityPositions[timeZone.city])
-        .map(timeZone => {
-            const position = cityPositions[timeZone.city];
-            const activeClass = timeZone.city === selectedCity ? " active" : "";
-            return `
-                <button
-                    class="map-marker${activeClass}"
-                    style="left: ${position.left}%; top: ${position.top}%;"
-                    type="button"
-                    data-city="${timeZone.city}"
-                    aria-label="Show time in ${timeZone.city}"
-                >
-                    <span>${timeZone.city}</span>
-                </button>
-            `;
-        })
-        .join("");
+    Object.values(cityMarkers).forEach(marker => marker.remove());
+    cityMarkers = {};
 
-    document.querySelectorAll(".map-marker").forEach(marker => {
-        marker.addEventListener("click", () => {
-            selectedCity = marker.dataset.city;
-            showSelectedCity(selectedCity);
-            renderMapMarkers(latestTimeZones);
+    timeZones
+        .filter(timeZone => cityCoordinates[timeZone.city])
+        .forEach(timeZone => {
+            const marker = L.marker(cityCoordinates[timeZone.city])
+                .addTo(worldMap)
+                .bindTooltip(`${timeZone.city}: ${timeZone.time}`, {
+                    direction: "top",
+                    offset: [0, -8]
+                })
+                .on("click", () => {
+                    selectedCity = timeZone.city;
+                    showSelectedCity(selectedCity);
+                });
+
+            cityMarkers[timeZone.city] = marker;
         });
-    });
 }
 
 function showSelectedCity(city) {
@@ -91,6 +98,11 @@ function showSelectedCity(city) {
         <span>${timeZone.date}</span>
         <small>${timeZone.zoneId}</small>
     `;
+
+    const marker = cityMarkers[timeZone.city];
+    if (marker) {
+        marker.openTooltip();
+    }
 }
 
 function renderTimeZones(timeZones) {
@@ -108,5 +120,6 @@ function renderTimeZones(timeZones) {
 
 refreshButton.addEventListener("click", loadDateTime);
 
+initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);
