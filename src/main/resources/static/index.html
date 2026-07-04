@@ -9,7 +9,6 @@
 <body>
     <main class="page">
         <section class="card">
-            <p class="eyebrow">Spring Boot + Frontend</p>
             <h1>World Clock</h1>
 
             <div class="datetime-panel">
@@ -27,7 +26,21 @@
                 Server timezone: <span id="timezone">Loading...</span>
             </p>
 
-            <h2>Time Zones</h2>
+            <h2>Click a city</h2>
+            <div class="world-map" aria-label="Clickable world clock map">
+                <div class="map-blob north-america"></div>
+                <div class="map-blob south-america"></div>
+                <div class="map-blob europe-africa"></div>
+                <div class="map-blob asia"></div>
+                <div class="map-blob australia"></div>
+                <div id="map-markers"></div>
+            </div>
+
+            <section id="selected-time" class="selected-time" aria-live="polite">
+                Select a city on the map to see the local time.
+            </section>
+
+            <h2>Major Time Zones</h2>
             <div id="timezone-list" class="timezone-grid" aria-live="polite"></div>
 
             <button id="refresh-button" type="button">Refresh Now</button>
