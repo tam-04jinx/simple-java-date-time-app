@@ -31,10 +31,20 @@ public class DateTimeController {
         return List.of(
                 createTimeZoneResponse("Austin", "America/Chicago"),
                 createTimeZoneResponse("New York", "America/New_York"),
+                createTimeZoneResponse("Los Angeles", "America/Los_Angeles"),
+                createTimeZoneResponse("Mexico City", "America/Mexico_City"),
+                createTimeZoneResponse("Sao Paulo", "America/Sao_Paulo"),
                 createTimeZoneResponse("London", "Europe/London"),
+                createTimeZoneResponse("Paris", "Europe/Paris"),
+                createTimeZoneResponse("Cairo", "Africa/Cairo"),
+                createTimeZoneResponse("Dubai", "Asia/Dubai"),
                 createTimeZoneResponse("Hyderabad", "Asia/Kolkata"),
+                createTimeZoneResponse("Singapore", "Asia/Singapore"),
+                createTimeZoneResponse("Hong Kong", "Asia/Hong_Kong"),
                 createTimeZoneResponse("Tokyo", "Asia/Tokyo"),
-                createTimeZoneResponse("Sydney", "Australia/Sydney")
+                createTimeZoneResponse("Seoul", "Asia/Seoul"),
+                createTimeZoneResponse("Sydney", "Australia/Sydney"),
+                createTimeZoneResponse("Auckland", "Pacific/Auckland")
         );
     }
 
