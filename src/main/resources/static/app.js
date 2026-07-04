@@ -3,19 +3,33 @@ const timeElement = document.querySelector("#time");
 const timezoneElement = document.querySelector("#timezone");
 const timezoneListElement = document.querySelector("#timezone-list");
 const selectedTimeElement = document.querySelector("#selected-time");
+const citySelectElement = document.querySelector("#city-select");
 const refreshButton = document.querySelector("#refresh-button");
 
 const cityCoordinates = {
     Austin: [30.2672, -97.7431],
     "New York": [40.7128, -74.0060],
+    "Los Angeles": [34.0522, -118.2437],
+    "Mexico City": [19.4326, -99.1332],
+    "Sao Paulo": [-23.5505, -46.6333],
     London: [51.5074, -0.1278],
+    Paris: [48.8566, 2.3522],
+    Cairo: [30.0444, 31.2357],
+    Dubai: [25.2048, 55.2708],
     Hyderabad: [17.3850, 78.4867],
+    Singapore: [1.3521, 103.8198],
+    "Hong Kong": [22.3193, 114.1694],
     Tokyo: [35.6762, 139.6503],
-    Sydney: [-33.8688, 151.2093]
+    Seoul: [37.5665, 126.9780],
+    Sydney: [-33.8688, 151.2093],
+    Auckland: [-36.8485, 174.7633]
 };
+
+const defaultSelectedCities = ["Austin", "New York", "London", "Hyderabad", "Tokyo", "Sydney"];
 
 let latestTimeZones = [];
 let selectedCity = "Austin";
+let selectedCities = [...defaultSelectedCities];
 let worldMap;
 let cityMarkers = {};
 
@@ -49,9 +63,8 @@ async function loadDateTime() {
         dateElement.textContent = dateTime.date;
         timeElement.textContent = dateTime.time;
         timezoneElement.textContent = dateTime.timeZone;
-        renderMapMarkers(latestTimeZones);
-        renderTimeZones(latestTimeZones);
-        showSelectedCity(selectedCity);
+        renderCitySelect(latestTimeZones);
+        renderSelectedView();
     } catch (error) {
         dateElement.textContent = "Unavailable";
         timeElement.textContent = "Unavailable";
@@ -60,6 +73,36 @@ async function loadDateTime() {
         selectedTimeElement.textContent = "Unable to load city times.";
         console.error(error);
     }
+}
+
+function renderCitySelect(timeZones) {
+    if (citySelectElement.options.length > 0) {
+        return;
+    }
+
+    citySelectElement.innerHTML = timeZones
+        .map(timeZone => `
+            <option value="${timeZone.city}" ${selectedCities.includes(timeZone.city) ? "selected" : ""}>
+                ${timeZone.city}
+            </option>
+        `)
+        .join("");
+}
+
+function getSelectedTimeZones() {
+    return latestTimeZones.filter(timeZone => selectedCities.includes(timeZone.city));
+}
+
+function renderSelectedView() {
+    const selectedTimeZones = getSelectedTimeZones();
+
+    if (!selectedTimeZones.some(timeZone => timeZone.city === selectedCity)) {
+        selectedCity = selectedTimeZones[0]?.city || "";
+    }
+
+    renderMapMarkers(selectedTimeZones);
+    renderTimeZones(selectedTimeZones);
+    showSelectedCity(selectedCity);
 }
 
 function renderMapMarkers(timeZones) {
@@ -85,10 +128,10 @@ function renderMapMarkers(timeZones) {
 }
 
 function showSelectedCity(city) {
-    const timeZone = latestTimeZones.find(item => item.city === city) || latestTimeZones[0];
+    const timeZone = latestTimeZones.find(item => item.city === city);
 
     if (!timeZone) {
-        selectedTimeElement.textContent = "Select a city on the map to see the local time.";
+        selectedTimeElement.textContent = "Select cities from the dropdown to show them on the map.";
         return;
     }
 
@@ -106,6 +149,11 @@ function showSelectedCity(city) {
 }
 
 function renderTimeZones(timeZones) {
+    if (timeZones.length === 0) {
+        timezoneListElement.innerHTML = "<p class='error'>No cities selected.</p>";
+        return;
+    }
+
     timezoneListElement.innerHTML = timeZones
         .map(timeZone => `
             <article class="timezone-card" data-city="${timeZone.city}">
@@ -117,6 +165,11 @@ function renderTimeZones(timeZones) {
         `)
         .join("");
 }
+
+citySelectElement.addEventListener("change", () => {
+    selectedCities = Array.from(citySelectElement.selectedOptions).map(option => option.value);
+    renderSelectedView();
+});
 
 refreshButton.addEventListener("click", loadDateTime);
 
