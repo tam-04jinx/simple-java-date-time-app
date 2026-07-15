@@ -1,41 +1,62 @@
 package com.example.datetime;
 
-import static org.hamcrest.Matchers.blankOrNullString;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(DateTimeController.class)
 class DateTimeControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final DateTimeController controller = new DateTimeController();
 
     @Test
-    void shouldReturnCurrentDateTime() throws Exception {
-        mockMvc.perform(get("/api/datetime"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.date", not(blankOrNullString())))
-                .andExpect(jsonPath("$.time", not(blankOrNullString())))
-                .andExpect(jsonPath("$.dateTime", not(blankOrNullString())))
-                .andExpect(jsonPath("$.timeZone", not(blankOrNullString())));
+    void shouldReturnCurrentDateTime() {
+        DateTimeController.DateTimeResponse response = controller.getCurrentDateTime("system");
+
+        assertThat(response.date()).isNotBlank();
+        assertThat(response.time()).isNotBlank();
+        assertThat(response.time24Hour()).isNotBlank();
+        assertThat(response.dateTime()).isNotBlank();
+        assertThat(response.timeZone()).isNotBlank();
+        assertThat(response.utcOffset()).isNotBlank();
+        assertThat(response.dayOfWeek()).isNotBlank();
+        assertThat(response.dayOfYear()).isBetween(1, 366);
+        assertThat(response.epochSeconds()).isPositive();
+        assertThat(response.fallback()).isFalse();
     }
 
     @Test
-    void shouldReturnMultipleTimeZones() throws Exception {
-        mockMvc.perform(get("/api/timezones"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", greaterThanOrEqualTo(6)))
-                .andExpect(jsonPath("$[0].city", not(blankOrNullString())))
-                .andExpect(jsonPath("$[0].zoneId", not(blankOrNullString())))
-                .andExpect(jsonPath("$[0].date", not(blankOrNullString())))
-                .andExpect(jsonPath("$[0].time", not(blankOrNullString())));
+    void shouldReturnRequestedTimezone() {
+        DateTimeController.DateTimeResponse response = controller.getCurrentDateTime("UTC");
+
+        assertThat(response.timeZone()).isEqualTo("UTC");
+        assertThat(response.utcOffset()).isEqualTo("Z");
+        assertThat(response.fallback()).isFalse();
+    }
+
+    @Test
+    void shouldFallbackForInvalidTimezone() {
+        DateTimeController.DateTimeResponse response = controller.getCurrentDateTime("Not/AZone");
+
+        assertThat(response.timeZone()).isNotBlank();
+        assertThat(response.fallback()).isTrue();
+    }
+
+    @Test
+    void shouldReturnMultipleTimeZones() {
+        List<DateTimeController.TimeZoneResponse> timeZones = controller.getTimeZones();
+
+        assertThat(timeZones).hasSizeGreaterThanOrEqualTo(6);
+        assertThat(timeZones.get(0).city()).isNotBlank();
+        assertThat(timeZones.get(0).zoneId()).isNotBlank();
+        assertThat(timeZones.get(0).date()).isNotBlank();
+        assertThat(timeZones.get(0).time()).isNotBlank();
+        assertThat(timeZones.get(0).time24Hour()).isNotBlank();
+        assertThat(timeZones.get(0).dateTime()).isNotBlank();
+        assertThat(timeZones.get(0).utcOffset()).isNotBlank();
+        assertThat(timeZones.get(0).dayOfWeek()).isNotBlank();
+        assertThat(timeZones.get(0).dayOfYear()).isBetween(1, 366);
+        assertThat(timeZones.get(0).epochSeconds()).isPositive();
     }
 }
