@@ -4,6 +4,9 @@ const timezoneElement = document.querySelector("#timezone");
 const timezoneListElement = document.querySelector("#timezone-list");
 const selectedTimeElement = document.querySelector("#selected-time");
 const citySelectElement = document.querySelector("#city-select");
+const cityCountElement = document.querySelector("#city-count");
+const timeSpreadElement = document.querySelector("#time-spread");
+const themeButtons = document.querySelectorAll(".theme-button");
 const refreshButton = document.querySelector("#refresh-button");
 
 const cityCoordinates = {
@@ -32,8 +35,41 @@ let selectedCity = "Austin";
 let selectedCities = [...defaultSelectedCities];
 let worldMap;
 let cityMarkers = {};
+let mapAvailable = false;
+
+function getDayPhase(dateTime) {
+    const hour = getHourFromDateTime(dateTime);
+
+    if (hour >= 6 && hour < 18) {
+        return { icon: "☀", label: "Day", value: "day" };
+    }
+
+    if ((hour >= 5 && hour < 6) || (hour >= 18 && hour < 20)) {
+        return { icon: "◐", label: "Twilight", value: "twilight" };
+    }
+
+    return { icon: "☾", label: "Night", value: "night" };
+}
+
+function applyTheme(theme) {
+    document.body.dataset.theme = theme;
+    themeButtons.forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.theme === theme));
+    });
+    localStorage.setItem("worldClockTheme", theme);
+}
 
 function initializeMap() {
+    if (typeof L === "undefined") {
+        document.querySelector("#world-map").innerHTML = `
+            <div class="map-fallback">
+                <span>Map offline</span>
+                <strong>City cards still update live.</strong>
+            </div>
+        `;
+        return;
+    }
+
     worldMap = L.map("world-map", {
         worldCopyJump: true,
         scrollWheelZoom: false
@@ -44,6 +80,8 @@ function initializeMap() {
         minZoom: 2,
         attribution: "&copy; OpenStreetMap contributors"
     }).addTo(worldMap);
+
+    mapAvailable = true;
 }
 
 async function loadDateTime() {
@@ -65,6 +103,7 @@ async function loadDateTime() {
         timezoneElement.textContent = dateTime.timeZone;
         renderCitySelect(latestTimeZones);
         renderSelectedView();
+        updateInsights();
     } catch (error) {
         dateElement.textContent = "Unavailable";
         timeElement.textContent = "Unavailable";
@@ -106,17 +145,34 @@ function renderSelectedView() {
 }
 
 function renderMapMarkers(timeZones) {
+    if (!mapAvailable) {
+        return;
+    }
+
     Object.values(cityMarkers).forEach(marker => marker.remove());
     cityMarkers = {};
 
     timeZones
         .filter(timeZone => cityCoordinates[timeZone.city])
         .forEach(timeZone => {
-            const marker = L.marker(cityCoordinates[timeZone.city])
+            const phase = getDayPhase(timeZone.dateTime);
+            const marker = L.marker(cityCoordinates[timeZone.city], {
+                icon: L.divIcon({
+                    className: "day-night-marker-wrap",
+                    html: `
+                        <span class="day-night-marker is-${phase.value}" aria-label="${timeZone.city} is in ${phase.label.toLowerCase()}">
+                            ${phase.icon}
+                        </span>
+                    `,
+                    iconSize: [38, 38],
+                    iconAnchor: [19, 19],
+                    tooltipAnchor: [0, -18]
+                })
+            })
                 .addTo(worldMap)
-                .bindTooltip(`${timeZone.city}: ${timeZone.time}`, {
+                .bindTooltip(`${timeZone.city}: ${timeZone.time} · ${phase.label}`, {
                     direction: "top",
-                    offset: [0, -8]
+                    offset: [0, -12]
                 })
                 .on("click", () => {
                     selectedCity = timeZone.city;
@@ -139,6 +195,7 @@ function showSelectedCity(city) {
         <span class="city">${timeZone.city}</span>
         <strong>${timeZone.time}</strong>
         <span>${timeZone.date}</span>
+        <span>${getDayPhase(timeZone.dateTime).label}</span>
         <small>${timeZone.zoneId}</small>
     `;
 
@@ -146,6 +203,10 @@ function showSelectedCity(city) {
     if (marker) {
         marker.openTooltip();
     }
+
+    document.querySelectorAll(".timezone-card").forEach(card => {
+        card.classList.toggle("is-active", card.dataset.city === timeZone.city);
+    });
 }
 
 function renderTimeZones(timeZones) {
@@ -155,24 +216,65 @@ function renderTimeZones(timeZones) {
     }
 
     timezoneListElement.innerHTML = timeZones
-        .map(timeZone => `
-            <article class="timezone-card" data-city="${timeZone.city}">
+        .map(timeZone => {
+            const phase = getDayPhase(timeZone.dateTime);
+            return `
+            <button class="timezone-card is-${phase.value}" type="button" data-city="${timeZone.city}">
                 <span class="city">${timeZone.city}</span>
                 <strong>${timeZone.time}</strong>
                 <span>${timeZone.date}</span>
+                <span>${phase.label}</span>
                 <small>${timeZone.zoneId}</small>
-            </article>
-        `)
+            </button>
+        `;
+        })
         .join("");
+
+    timezoneListElement.querySelectorAll(".timezone-card").forEach(card => {
+        card.addEventListener("click", () => {
+            selectedCity = card.dataset.city;
+            showSelectedCity(selectedCity);
+        });
+    });
+}
+
+function getHourFromDateTime(dateTime) {
+    return Number(dateTime.match(/T(\d{2})/)?.[1] || 0);
+}
+
+function updateInsights() {
+    const selectedTimeZones = getSelectedTimeZones();
+
+    cityCountElement.textContent = `${selectedTimeZones.length} ${selectedTimeZones.length === 1 ? "city" : "cities"} selected`;
+
+    if (selectedTimeZones.length < 2) {
+        timeSpreadElement.textContent = "Add cities to compare time spread";
+        return;
+    }
+
+    const hours = selectedTimeZones
+        .map(timeZone => getHourFromDateTime(timeZone.dateTime))
+        .sort((first, second) => first - second);
+    const gaps = hours.map((hour, index) => {
+        const nextHour = hours[(index + 1) % hours.length];
+        return (nextHour - hour + 24) % 24;
+    });
+    const spread = 24 - Math.max(...gaps);
+    timeSpreadElement.textContent = `${spread} hour spread across selected cities`;
 }
 
 citySelectElement.addEventListener("change", () => {
     selectedCities = Array.from(citySelectElement.selectedOptions).map(option => option.value);
     renderSelectedView();
+    updateInsights();
 });
 
 refreshButton.addEventListener("click", loadDateTime);
+themeButtons.forEach(button => {
+    button.addEventListener("click", () => applyTheme(button.dataset.theme));
+});
 
+applyTheme(localStorage.getItem("worldClockTheme") || "aurora");
 initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);

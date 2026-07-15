@@ -10,7 +10,18 @@
 <body>
     <main class="page">
         <section class="card">
-            <h1>World Clock</h1>
+            <div class="hero">
+                <div>
+                    <span class="eyebrow">Live global timeboard</span>
+                    <h1>World Clock</h1>
+                </div>
+
+                <div class="theme-switcher" aria-label="Color theme">
+                    <button class="theme-button" type="button" data-theme="aurora" aria-pressed="true">Aurora</button>
+                    <button class="theme-button" type="button" data-theme="sunset" aria-pressed="false">Sunset</button>
+                    <button class="theme-button" type="button" data-theme="midnight" aria-pressed="false">Midnight</button>
+                </div>
+            </div>
 
             <div class="datetime-panel">
                 <div>
@@ -27,14 +38,27 @@
                 Server timezone: <span id="timezone">Loading...</span>
             </p>
 
+            <div class="insight-strip" aria-live="polite">
+                <span id="city-count">0 cities selected</span>
+                <span id="time-spread">Waiting for city data</span>
+                <span id="next-refresh">Refreshes every second</span>
+            </div>
+
             <div class="city-picker">
                 <label class="label" for="city-select">Choose cities to show on the map</label>
                 <select id="city-select" multiple size="8" aria-describedby="city-help"></select>
-                <p id="city-help" class="timezone">Hold Cmd on Mac or Ctrl on Windows to select multiple cities.</p>
+                <p id="city-help" class="timezone">Hold Cmd on Mac or Ctrl on Windows to select multiple cities. Click a card or map pin to spotlight a city.</p>
             </div>
 
             <h2>Selected cities on the map</h2>
-            <div id="world-map" class="world-map" aria-label="Interactive world map"></div>
+            <div class="map-shell">
+                <div id="world-map" class="world-map" aria-label="Interactive world map"></div>
+                <div class="map-legend" aria-label="Day and night legend">
+                    <span><i class="legend-dot legend-day"></i> Day</span>
+                    <span><i class="legend-dot legend-twilight"></i> Twilight</span>
+                    <span><i class="legend-dot legend-night"></i> Night</span>
+                </div>
+            </div>
 
             <section id="selected-time" class="selected-time" aria-live="polite">
                 Select a city on the map to see the local time.
