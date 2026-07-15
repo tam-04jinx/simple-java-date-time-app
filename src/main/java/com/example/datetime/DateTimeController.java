@@ -1,11 +1,13 @@
 package com.example.datetime;
 
+import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -13,16 +15,24 @@ public class DateTimeController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm:ss a");
+    private static final DateTimeFormatter TIME_24_HOUR_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @GetMapping("/api/datetime")
-    public DateTimeResponse getCurrentDateTime() {
-        ZonedDateTime now = ZonedDateTime.now();
+    public DateTimeResponse getCurrentDateTime(@RequestParam(defaultValue = "system") String zone) {
+        ZoneSelection zoneSelection = resolveZone(zone);
+        ZonedDateTime now = ZonedDateTime.now(zoneSelection.zoneId());
 
         return new DateTimeResponse(
                 now.format(DATE_FORMATTER),
                 now.format(TIME_FORMATTER),
+                now.format(TIME_24_HOUR_FORMATTER),
                 now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                now.getZone().toString()
+                now.getZone().toString(),
+                now.getOffset().toString(),
+                now.getDayOfWeek().toString(),
+                now.getDayOfYear(),
+                now.toEpochSecond(),
+                zoneSelection.fallback()
         );
     }
 
@@ -48,6 +58,18 @@ public class DateTimeController {
         );
     }
 
+    private ZoneSelection resolveZone(String zone) {
+        if (zone == null || zone.isBlank() || zone.equalsIgnoreCase("system")) {
+            return new ZoneSelection(ZoneId.systemDefault(), false);
+        }
+
+        try {
+            return new ZoneSelection(ZoneId.of(zone), false);
+        } catch (DateTimeException exception) {
+            return new ZoneSelection(ZoneId.systemDefault(), true);
+        }
+    }
+
     private TimeZoneResponse createTimeZoneResponse(String city, String zoneId) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of(zoneId));
 
@@ -56,15 +78,26 @@ public class DateTimeController {
                 zoneId,
                 now.format(DATE_FORMATTER),
                 now.format(TIME_FORMATTER),
-                now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                now.format(TIME_24_HOUR_FORMATTER),
+                now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                now.getOffset().toString(),
+                now.getDayOfWeek().toString(),
+                now.getDayOfYear(),
+                now.toEpochSecond()
         );
     }
 
     public record DateTimeResponse(
             String date,
             String time,
+            String time24Hour,
             String dateTime,
-            String timeZone
+            String timeZone,
+            String utcOffset,
+            String dayOfWeek,
+            int dayOfYear,
+            long epochSeconds,
+            boolean fallback
     ) {}
 
     public record TimeZoneResponse(
@@ -72,6 +105,13 @@ public class DateTimeController {
             String zoneId,
             String date,
             String time,
-            String dateTime
+            String time24Hour,
+            String dateTime,
+            String utcOffset,
+            String dayOfWeek,
+            int dayOfYear,
+            long epochSeconds
     ) {}
+
+    private record ZoneSelection(ZoneId zoneId, boolean fallback) {}
 }
