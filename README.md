@@ -1,12 +1,13 @@
 # Simple Java Date & Time App
 
 A simple Java Spring Boot application with a frontend that displays the current server date and time.
-The app also includes a world clock view with selectable cities, map markers, theme controls, saved favorites, shareable planner links, and enriched date/time API metadata.
+The app also includes a world clock view with selectable cities, map markers, theme controls, saved favorites, shareable planner links, live map light and shadow, and enriched date/time API metadata.
 
 ## Features
 
 - Live server date and time
 - Interactive world map with selected city markers
+- Animated daylight and night shadow overlay on the map
 - Day, twilight, and night indicators for each city
 - Work-hours meeting readiness across selected cities
 - Favorite cities saved in the browser
