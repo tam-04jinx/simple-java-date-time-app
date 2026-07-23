@@ -10,6 +10,8 @@ const meetingWindowElement = document.querySelector("#meeting-window");
 const favoriteListElement = document.querySelector("#favorite-list");
 const shareButton = document.querySelector("#share-button");
 const shareStatusElement = document.querySelector("#share-status");
+const sunlightOverlayElement = document.querySelector("#sunlight-overlay");
+const sunlightStatusElement = document.querySelector("#sunlight-status");
 const themeButtons = document.querySelectorAll(".theme-button");
 const refreshButton = document.querySelector("#refresh-button");
 
@@ -111,6 +113,7 @@ function initializeMap() {
                 <strong>City cards still update live.</strong>
             </div>
         `;
+        updateSunlightOverlay();
         return;
     }
 
@@ -126,6 +129,38 @@ function initializeMap() {
     }).addTo(worldMap);
 
     mapAvailable = true;
+    updateSunlightOverlay();
+}
+
+function updateSunlightOverlay() {
+    if (!sunlightOverlayElement) {
+        return;
+    }
+
+    const now = new Date();
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes() + now.getUTCSeconds() / 60;
+    const sunLongitude = 180 - (utcMinutes / 1440) * 360;
+    const normalizedSunLongitude = ((sunLongitude + 540) % 360) - 180;
+    const sunX = ((normalizedSunLongitude + 180) / 360) * 100;
+    const shadowX = (sunX + 50) % 100;
+    const twilightWidth = 12 + Math.abs(Math.sin((utcMinutes / 1440) * Math.PI * 2)) * 6;
+
+    sunlightOverlayElement.style.setProperty("--sun-x", `${sunX}%`);
+    sunlightOverlayElement.style.setProperty("--shadow-x", `${shadowX}%`);
+    sunlightOverlayElement.style.setProperty("--twilight-width", `${twilightWidth}%`);
+
+    if (sunlightStatusElement) {
+        sunlightStatusElement.textContent = `Live light at ${formatLongitude(normalizedSunLongitude)} · shadow opposite`;
+    }
+}
+
+function formatLongitude(longitude) {
+    const absoluteLongitude = Math.round(Math.abs(longitude));
+    if (absoluteLongitude === 0 || absoluteLongitude === 180) {
+        return `${absoluteLongitude}°`;
+    }
+
+    return longitude > 0 ? `${absoluteLongitude}°E` : `${absoluteLongitude}°W`;
 }
 
 async function loadDateTime() {
@@ -153,6 +188,7 @@ async function loadDateTime() {
         syncCitySelect();
         renderSelectedView();
         updateInsights();
+        updateSunlightOverlay();
         persistSelections();
         updateUrlState();
     } catch (error) {
@@ -413,3 +449,4 @@ applyTheme(new URLSearchParams(window.location.search).get("theme") || localStor
 initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);
+setInterval(updateSunlightOverlay, 60000);
