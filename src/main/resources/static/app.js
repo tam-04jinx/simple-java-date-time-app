@@ -6,6 +6,10 @@ const selectedTimeElement = document.querySelector("#selected-time");
 const citySelectElement = document.querySelector("#city-select");
 const cityCountElement = document.querySelector("#city-count");
 const timeSpreadElement = document.querySelector("#time-spread");
+const meetingWindowElement = document.querySelector("#meeting-window");
+const favoriteListElement = document.querySelector("#favorite-list");
+const shareButton = document.querySelector("#share-button");
+const shareStatusElement = document.querySelector("#share-status");
 const themeButtons = document.querySelectorAll(".theme-button");
 const refreshButton = document.querySelector("#refresh-button");
 
@@ -29,13 +33,43 @@ const cityCoordinates = {
 };
 
 const defaultSelectedCities = ["Austin", "New York", "London", "Hyderabad", "Tokyo", "Sydney"];
+const workdayStartHour = 9;
+const workdayEndHour = 17;
 
 let latestTimeZones = [];
 let selectedCity = "Austin";
-let selectedCities = [...defaultSelectedCities];
+let selectedCities = loadInitialCities();
+let favoriteCities = loadFavoriteCities();
 let worldMap;
 let cityMarkers = {};
 let mapAvailable = false;
+
+function loadInitialCities() {
+    const sharedCities = new URLSearchParams(window.location.search).get("cities");
+    if (sharedCities) {
+        return sharedCities.split(",").filter(Boolean);
+    }
+
+    const savedCities = JSON.parse(localStorage.getItem("worldClockSelectedCities") || "null");
+    return Array.isArray(savedCities) && savedCities.length > 0 ? savedCities : [...defaultSelectedCities];
+}
+
+function loadFavoriteCities() {
+    const savedFavorites = JSON.parse(localStorage.getItem("worldClockFavoriteCities") || "null");
+    return Array.isArray(savedFavorites) ? savedFavorites : ["Austin", "London"];
+}
+
+function persistSelections() {
+    localStorage.setItem("worldClockSelectedCities", JSON.stringify(selectedCities));
+    localStorage.setItem("worldClockFavoriteCities", JSON.stringify(favoriteCities));
+}
+
+function updateUrlState() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("cities", selectedCities.join(","));
+    url.searchParams.set("theme", document.body.dataset.theme || "aurora");
+    window.history.replaceState({}, "", url);
+}
 
 function getDayPhase(dateTime) {
     const hour = getHourFromDateTime(dateTime);
@@ -51,12 +85,22 @@ function getDayPhase(dateTime) {
     return { icon: "☾", label: "Night", value: "night" };
 }
 
+function getWorkWindow(dateTime) {
+    const hour = getHourFromDateTime(dateTime);
+    const friendly = hour >= workdayStartHour && hour < workdayEndHour;
+    return {
+        friendly,
+        label: friendly ? "Work hours" : "After hours"
+    };
+}
+
 function applyTheme(theme) {
     document.body.dataset.theme = theme;
     themeButtons.forEach(button => {
         button.setAttribute("aria-pressed", String(button.dataset.theme === theme));
     });
     localStorage.setItem("worldClockTheme", theme);
+    updateUrlState();
 }
 
 function initializeMap() {
@@ -97,13 +141,20 @@ async function loadDateTime() {
 
         const dateTime = await dateTimeResponse.json();
         latestTimeZones = await timeZonesResponse.json();
+        selectedCities = selectedCities.filter(city => latestTimeZones.some(timeZone => timeZone.city === city));
+        if (selectedCities.length === 0) {
+            selectedCities = [...defaultSelectedCities];
+        }
 
         dateElement.textContent = dateTime.date;
         timeElement.textContent = dateTime.time;
         timezoneElement.textContent = dateTime.timeZone;
         renderCitySelect(latestTimeZones);
+        syncCitySelect();
         renderSelectedView();
         updateInsights();
+        persistSelections();
+        updateUrlState();
     } catch (error) {
         dateElement.textContent = "Unavailable";
         timeElement.textContent = "Unavailable";
@@ -128,6 +179,12 @@ function renderCitySelect(timeZones) {
         .join("");
 }
 
+function syncCitySelect() {
+    Array.from(citySelectElement.options).forEach(option => {
+        option.selected = selectedCities.includes(option.value);
+    });
+}
+
 function getSelectedTimeZones() {
     return latestTimeZones.filter(timeZone => selectedCities.includes(timeZone.city));
 }
@@ -139,6 +196,7 @@ function renderSelectedView() {
         selectedCity = selectedTimeZones[0]?.city || "";
     }
 
+    renderFavorites();
     renderMapMarkers(selectedTimeZones);
     renderTimeZones(selectedTimeZones);
     showSelectedCity(selectedCity);
@@ -156,6 +214,7 @@ function renderMapMarkers(timeZones) {
         .filter(timeZone => cityCoordinates[timeZone.city])
         .forEach(timeZone => {
             const phase = getDayPhase(timeZone.dateTime);
+            const workWindow = getWorkWindow(timeZone.dateTime);
             const marker = L.marker(cityCoordinates[timeZone.city], {
                 icon: L.divIcon({
                     className: "day-night-marker-wrap",
@@ -170,7 +229,7 @@ function renderMapMarkers(timeZones) {
                 })
             })
                 .addTo(worldMap)
-                .bindTooltip(`${timeZone.city}: ${timeZone.time} · ${phase.label}`, {
+                .bindTooltip(`${timeZone.city}: ${timeZone.time} · ${phase.label} · ${workWindow.label}`, {
                     direction: "top",
                     offset: [0, -12]
                 })
@@ -191,11 +250,12 @@ function showSelectedCity(city) {
         return;
     }
 
+    const workWindow = getWorkWindow(timeZone.dateTime);
     selectedTimeElement.innerHTML = `
         <span class="city">${timeZone.city}</span>
         <strong>${timeZone.time}</strong>
         <span>${timeZone.date}</span>
-        <span>${getDayPhase(timeZone.dateTime).label}</span>
+        <span>${getDayPhase(timeZone.dateTime).label} · ${workWindow.label}</span>
         <small>${timeZone.zoneId}</small>
     `;
 
@@ -209,6 +269,36 @@ function showSelectedCity(city) {
     });
 }
 
+function renderFavorites() {
+    if (favoriteCities.length === 0) {
+        favoriteListElement.innerHTML = "<span class='favorite-empty'>Mark cards as favorites to pin them here.</span>";
+        return;
+    }
+
+    favoriteListElement.innerHTML = favoriteCities
+        .filter(city => latestTimeZones.some(timeZone => timeZone.city === city))
+        .map(city => `
+            <button class="favorite-chip" type="button" data-city="${city}">
+                ${city}
+            </button>
+        `)
+        .join("");
+
+    favoriteListElement.querySelectorAll(".favorite-chip").forEach(button => {
+        button.addEventListener("click", () => {
+            if (!selectedCities.includes(button.dataset.city)) {
+                selectedCities = [...selectedCities, button.dataset.city];
+            }
+            selectedCity = button.dataset.city;
+            syncCitySelect();
+            renderSelectedView();
+            updateInsights();
+            persistSelections();
+            updateUrlState();
+        });
+    });
+}
+
 function renderTimeZones(timeZones) {
     if (timeZones.length === 0) {
         timezoneListElement.innerHTML = "<p class='error'>No cities selected.</p>";
@@ -218,24 +308,46 @@ function renderTimeZones(timeZones) {
     timezoneListElement.innerHTML = timeZones
         .map(timeZone => {
             const phase = getDayPhase(timeZone.dateTime);
+            const workWindow = getWorkWindow(timeZone.dateTime);
+            const favorite = favoriteCities.includes(timeZone.city);
             return `
-            <button class="timezone-card is-${phase.value}" type="button" data-city="${timeZone.city}">
-                <span class="city">${timeZone.city}</span>
-                <strong>${timeZone.time}</strong>
-                <span>${timeZone.date}</span>
-                <span>${phase.label}</span>
-                <small>${timeZone.zoneId}</small>
-            </button>
+            <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${timeZone.city}">
+                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? "Remove" : "Add"} ${timeZone.city} favorite" data-city="${timeZone.city}">
+                    ${favorite ? "★" : "☆"}
+                </button>
+                <button class="timezone-card-main" type="button" data-city="${timeZone.city}">
+                    <span class="city">${timeZone.city}</span>
+                    <strong>${timeZone.time}</strong>
+                    <span>${timeZone.date}</span>
+                    <span>${phase.label} · ${workWindow.label}</span>
+                    <small>${timeZone.zoneId}</small>
+                </button>
+            </article>
         `;
         })
         .join("");
 
-    timezoneListElement.querySelectorAll(".timezone-card").forEach(card => {
+    timezoneListElement.querySelectorAll(".timezone-card-main").forEach(card => {
         card.addEventListener("click", () => {
             selectedCity = card.dataset.city;
             showSelectedCity(selectedCity);
         });
     });
+
+    timezoneListElement.querySelectorAll(".favorite-button").forEach(button => {
+        button.addEventListener("click", () => toggleFavorite(button.dataset.city));
+    });
+}
+
+function toggleFavorite(city) {
+    favoriteCities = favoriteCities.includes(city)
+        ? favoriteCities.filter(item => item !== city)
+        : [...favoriteCities, city];
+
+    renderFavorites();
+    renderTimeZones(getSelectedTimeZones());
+    showSelectedCity(selectedCity);
+    persistSelections();
 }
 
 function getHourFromDateTime(dateTime) {
@@ -249,6 +361,7 @@ function updateInsights() {
 
     if (selectedTimeZones.length < 2) {
         timeSpreadElement.textContent = "Add cities to compare time spread";
+        meetingWindowElement.textContent = "Add cities for meeting insight";
         return;
     }
 
@@ -260,21 +373,43 @@ function updateInsights() {
         return (nextHour - hour + 24) % 24;
     });
     const spread = 24 - Math.max(...gaps);
+    const workFriendlyCount = selectedTimeZones.filter(timeZone => getWorkWindow(timeZone.dateTime).friendly).length;
+
     timeSpreadElement.textContent = `${spread} hour spread across selected cities`;
+    meetingWindowElement.textContent = workFriendlyCount === selectedTimeZones.length
+        ? "All selected cities are in work hours"
+        : `${workFriendlyCount}/${selectedTimeZones.length} selected cities are in work hours`;
+}
+
+function copyShareLink() {
+    updateUrlState();
+    const shareUrl = window.location.href;
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            shareStatusElement.textContent = "Share link copied";
+        });
+        return;
+    }
+
+    shareStatusElement.textContent = shareUrl;
 }
 
 citySelectElement.addEventListener("change", () => {
     selectedCities = Array.from(citySelectElement.selectedOptions).map(option => option.value);
     renderSelectedView();
     updateInsights();
+    persistSelections();
+    updateUrlState();
 });
 
 refreshButton.addEventListener("click", loadDateTime);
+shareButton.addEventListener("click", copyShareLink);
 themeButtons.forEach(button => {
     button.addEventListener("click", () => applyTheme(button.dataset.theme));
 });
 
-applyTheme(localStorage.getItem("worldClockTheme") || "aurora");
+applyTheme(new URLSearchParams(window.location.search).get("theme") || localStorage.getItem("worldClockTheme") || "aurora");
 initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);
