@@ -1,7 +1,17 @@
 # Simple Java Date & Time App
 
 A simple Java Spring Boot application with a frontend that displays the current server date and time.
-The app also includes a world clock view with selectable cities, map markers, theme controls, and enriched date/time API metadata.
+The app also includes a world clock view with selectable cities, map markers, theme controls, saved favorites, shareable planner links, and enriched date/time API metadata.
+
+## Features
+
+- Live server date and time
+- Interactive world map with selected city markers
+- Day, twilight, and night indicators for each city
+- Work-hours meeting readiness across selected cities
+- Favorite cities saved in the browser
+- Shareable links that preserve selected cities and theme
+- Theme switching between Aurora, Sunset, and Midnight
 
 ## Tech Stack
 
@@ -23,6 +33,12 @@ Then open:
 
 ```text
 http://localhost:8080
+```
+
+You can also use the helper script, which defaults to port `8090`:
+
+```bash
+./run-local.sh
 ```
 
 ## API Endpoint
