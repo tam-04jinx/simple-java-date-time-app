@@ -41,7 +41,19 @@
             <div class="insight-strip" aria-live="polite">
                 <span id="city-count">0 cities selected</span>
                 <span id="time-spread">Waiting for city data</span>
+                <span id="meeting-window">Meeting window pending</span>
                 <span id="next-refresh">Refreshes every second</span>
+            </div>
+
+            <div class="planner-panel">
+                <div>
+                    <span class="label">Favorite cities</span>
+                    <div id="favorite-list" class="favorite-list" aria-live="polite"></div>
+                </div>
+                <div class="share-tools">
+                    <button id="share-button" type="button">Copy Share Link</button>
+                    <span id="share-status" role="status">Selections save automatically</span>
+                </div>
             </div>
 
             <div class="city-picker">
