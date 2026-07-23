@@ -1,3 +1,21 @@
+@property --sun-x {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 50%;
+}
+
+@property --shadow-x {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+
+@property --twilight-width {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 14%;
+}
+
 :root {
     --background: #08111f;
     --background-panel: rgba(8, 17, 31, 0.86);
@@ -269,11 +287,61 @@ strong {
     box-shadow: 0 18px 46px rgba(2, 6, 23, 0.24);
 }
 
+.sunlight-overlay {
+    --sun-x: 50%;
+    --shadow-x: 0%;
+    --twilight-width: 14%;
+    position: absolute;
+    inset: 1px;
+    z-index: 420;
+    pointer-events: none;
+    border-radius: 8px;
+    mix-blend-mode: screen;
+    opacity: 0.92;
+    background:
+        radial-gradient(ellipse 32% 82% at var(--sun-x) 50%, rgba(255, 247, 184, 0.36) 0%, rgba(255, 197, 87, 0.20) 38%, rgba(255, 197, 87, 0.00) 68%),
+        radial-gradient(ellipse calc(34% + var(--twilight-width)) 96% at var(--sun-x) 50%, rgba(251, 113, 133, 0.18) 0%, rgba(251, 113, 133, 0.10) 42%, transparent 70%),
+        radial-gradient(ellipse 44% 92% at var(--shadow-x) 50%, rgba(1, 8, 24, 0.74) 0%, rgba(7, 17, 38, 0.56) 46%, rgba(7, 17, 38, 0.00) 76%);
+    transition:
+        --sun-x 1.8s linear,
+        --shadow-x 1.8s linear,
+        --twilight-width 1.8s ease,
+        opacity 0.4s ease;
+}
+
+.sunlight-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        linear-gradient(90deg, rgba(2, 6, 23, 0.34), transparent 22%, transparent 78%, rgba(2, 6, 23, 0.34)),
+        radial-gradient(circle at var(--sun-x) 50%, rgba(255, 255, 255, 0.16), transparent 18%);
+    mix-blend-mode: soft-light;
+}
+
+.sunlight-status {
+    position: absolute;
+    left: 14px;
+    bottom: 28px;
+    z-index: 520;
+    max-width: min(360px, calc(100% - 28px));
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--background-panel);
+    box-shadow: 0 14px 34px rgba(2, 6, 23, 0.24);
+    backdrop-filter: blur(14px);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
 .map-legend {
     position: absolute;
     right: 14px;
     bottom: 28px;
-    z-index: 500;
+    z-index: 520;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -316,9 +384,14 @@ strong {
     box-shadow: 0 0 14px rgba(251, 113, 133, 0.75);
 }
 
-.legend-night {
+.legend-night,
+.legend-shadow {
     background: #818cf8;
     box-shadow: 0 0 14px rgba(129, 140, 248, 0.75);
+}
+
+.legend-shadow {
+    background: #172554;
 }
 
 .map-fallback {
@@ -554,6 +627,13 @@ strong {
 
     .world-map {
         height: 330px;
+    }
+
+    .sunlight-status,
+    .map-legend {
+        position: static;
+        margin-top: 8px;
+        max-width: none;
     }
 }
 
