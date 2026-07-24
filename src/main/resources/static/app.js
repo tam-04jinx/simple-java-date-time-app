@@ -36,6 +36,89 @@ const cityCoordinates = {
     Auckland: [-36.8485, 174.7633]
 };
 
+const languageLabels = {
+    en: { en: "English", es: "Spanish", fr: "French", hi: "Hindi", ja: "Japanese" },
+    es: { en: "Inglés", es: "Español", fr: "Francés", hi: "Hindi", ja: "Japonés" },
+    fr: { en: "Anglais", es: "Espagnol", fr: "Français", hi: "Hindi", ja: "Japonais" },
+    hi: { en: "अंग्रेज़ी", es: "स्पेनिश", fr: "फ़्रेंच", hi: "हिन्दी", ja: "जापानी" },
+    ja: { en: "英語", es: "スペイン語", fr: "フランス語", hi: "ヒンディー語", ja: "日本語" }
+};
+
+const localizedCityNames = {
+    es: {
+        Austin: "Austin",
+        "New York": "Nueva York",
+        "Los Angeles": "Los Ángeles",
+        "Mexico City": "Ciudad de México",
+        "Sao Paulo": "São Paulo",
+        London: "Londres",
+        Paris: "París",
+        Cairo: "El Cairo",
+        Dubai: "Dubái",
+        Hyderabad: "Hyderabad",
+        Singapore: "Singapur",
+        "Hong Kong": "Hong Kong",
+        Tokyo: "Tokio",
+        Seoul: "Seúl",
+        Sydney: "Sídney",
+        Auckland: "Auckland"
+    },
+    fr: {
+        Austin: "Austin",
+        "New York": "New York",
+        "Los Angeles": "Los Angeles",
+        "Mexico City": "Mexico",
+        "Sao Paulo": "São Paulo",
+        London: "Londres",
+        Paris: "Paris",
+        Cairo: "Le Caire",
+        Dubai: "Dubaï",
+        Hyderabad: "Hyderabad",
+        Singapore: "Singapour",
+        "Hong Kong": "Hong Kong",
+        Tokyo: "Tokyo",
+        Seoul: "Séoul",
+        Sydney: "Sydney",
+        Auckland: "Auckland"
+    },
+    hi: {
+        Austin: "ऑस्टिन",
+        "New York": "न्यूयॉर्क",
+        "Los Angeles": "लॉस एंजेलिस",
+        "Mexico City": "मेक्सिको सिटी",
+        "Sao Paulo": "साओ पाउलो",
+        London: "लंदन",
+        Paris: "पेरिस",
+        Cairo: "काहिरा",
+        Dubai: "दुबई",
+        Hyderabad: "हैदराबाद",
+        Singapore: "सिंगापुर",
+        "Hong Kong": "हांगकांग",
+        Tokyo: "टोक्यो",
+        Seoul: "सियोल",
+        Sydney: "सिडनी",
+        Auckland: "ऑकलैंड"
+    },
+    ja: {
+        Austin: "オースティン",
+        "New York": "ニューヨーク",
+        "Los Angeles": "ロサンゼルス",
+        "Mexico City": "メキシコシティ",
+        "Sao Paulo": "サンパウロ",
+        London: "ロンドン",
+        Paris: "パリ",
+        Cairo: "カイロ",
+        Dubai: "ドバイ",
+        Hyderabad: "ハイデラバード",
+        Singapore: "シンガポール",
+        "Hong Kong": "香港",
+        Tokyo: "東京",
+        Seoul: "ソウル",
+        Sydney: "シドニー",
+        Auckland: "オークランド"
+    }
+};
+
 const translations = {
     en: {
         heroEyebrow: "Live global timeboard",
@@ -391,12 +474,29 @@ function translate(key, values = {}) {
     return phrase.replace(/\{(\w+)\}/g, (_, name) => values[name] ?? "");
 }
 
+function getCityLabel(city) {
+    return localizedCityNames[currentLanguage]?.[city] || city;
+}
+
+function getLanguageLabel(language) {
+    return languageLabels[currentLanguage]?.[language] || languageLabels.en[language] || language;
+}
+
+function renderLanguageOptions() {
+    if (!languageSelectElement) {
+        return;
+    }
+
+    Array.from(languageSelectElement.options).forEach(option => {
+        option.textContent = getLanguageLabel(option.value);
+    });
+    languageSelectElement.value = currentLanguage;
+}
+
 function applyLanguage(language) {
     currentLanguage = translations[language] ? language : "en";
     document.documentElement.lang = currentLanguage;
-    if (languageSelectElement) {
-        languageSelectElement.value = currentLanguage;
-    }
+    renderLanguageOptions();
 
     document.querySelectorAll("[data-i18n]").forEach(element => {
         element.textContent = translate(element.dataset.i18n);
@@ -406,6 +506,10 @@ function applyLanguage(language) {
     });
 
     if (latestTimeZones.length > 0) {
+        renderCitySelect(latestTimeZones);
+        renderLocationSelect(latestTimeZones);
+        syncCitySelect();
+        syncLocationSelect();
         renderSelectedView();
         updateInsights();
         scheduleDaylightRender();
@@ -665,28 +769,24 @@ async function loadDateTime() {
 }
 
 function renderCitySelect(timeZones) {
-    if (citySelectElement.options.length > 0) {
-        return;
-    }
-
     citySelectElement.innerHTML = timeZones
         .map(timeZone => `
             <option value="${timeZone.city}" ${selectedCities.includes(timeZone.city) ? "selected" : ""}>
-                ${timeZone.city}
+                ${getCityLabel(timeZone.city)}
             </option>
         `)
         .join("");
 }
 
 function renderLocationSelect(timeZones) {
-    if (!locationSelectElement || locationSelectElement.options.length > 0) {
+    if (!locationSelectElement) {
         return;
     }
 
     locationSelectElement.innerHTML = timeZones
         .map(timeZone => `
             <option value="${timeZone.city}">
-                ${timeZone.city}
+                ${getCityLabel(timeZone.city)}
             </option>
         `)
         .join("");
@@ -735,11 +835,12 @@ function renderMapMarkers(timeZones) {
         .forEach(timeZone => {
             const phase = getDayPhase(timeZone.dateTime);
             const workWindow = getWorkWindow(timeZone.dateTime);
+            const cityLabel = getCityLabel(timeZone.city);
             const marker = L.marker(cityCoordinates[timeZone.city], {
                 icon: L.divIcon({
                     className: "day-night-marker-wrap",
                     html: `
-                        <span class="day-night-marker is-${phase.value}" aria-label="${timeZone.city} is in ${phase.label.toLowerCase()}">
+                        <span class="day-night-marker is-${phase.value}" aria-label="${cityLabel} is in ${phase.label.toLowerCase()}">
                             ${phase.icon}
                         </span>
                     `,
@@ -749,7 +850,7 @@ function renderMapMarkers(timeZones) {
                 })
             })
                 .addTo(worldMap)
-                .bindTooltip(`${timeZone.city}: ${timeZone.time} · ${phase.label} · ${workWindow.label}`, {
+                .bindTooltip(`${cityLabel}: ${timeZone.time} · ${phase.label} · ${workWindow.label}`, {
                     direction: "top",
                     offset: [0, -12]
                 })
@@ -769,7 +870,7 @@ function showSelectedCity(city) {
 
     const workWindow = getWorkWindow(timeZone.dateTime);
     selectedTimeElement.innerHTML = `
-        <span class="city">${timeZone.city}</span>
+        <span class="city">${getCityLabel(timeZone.city)}</span>
         <strong>${timeZone.time}</strong>
         <span>${timeZone.date}</span>
         <span>${getDayPhase(timeZone.dateTime).label} · ${workWindow.label}</span>
@@ -818,7 +919,7 @@ function renderFavorites() {
         .filter(city => latestTimeZones.some(timeZone => timeZone.city === city))
         .map(city => `
             <button class="favorite-chip" type="button" data-city="${city}">
-                ${city}
+                ${getCityLabel(city)}
             </button>
         `)
         .join("");
@@ -839,13 +940,14 @@ function renderTimeZones(timeZones) {
             const phase = getDayPhase(timeZone.dateTime);
             const workWindow = getWorkWindow(timeZone.dateTime);
             const favorite = favoriteCities.includes(timeZone.city);
+            const cityLabel = getCityLabel(timeZone.city);
             return `
             <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${timeZone.city}" data-work-label="${workWindow.badge}">
-                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? translate("removeFavorite", { city: timeZone.city }) : translate("addFavorite", { city: timeZone.city })}" data-city="${timeZone.city}">
+                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? translate("removeFavorite", { city: cityLabel }) : translate("addFavorite", { city: cityLabel })}" data-city="${timeZone.city}">
                     ${favorite ? "★" : "☆"}
                 </button>
                 <button class="timezone-card-main" type="button" data-city="${timeZone.city}">
-                    <span class="city">${timeZone.city}</span>
+                    <span class="city">${cityLabel}</span>
                     <strong>${timeZone.time}</strong>
                     <span>${timeZone.date}</span>
                     <span>${phase.label} · ${workWindow.label}</span>
