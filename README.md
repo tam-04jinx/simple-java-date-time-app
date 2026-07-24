@@ -13,6 +13,7 @@ The app also includes a world clock view with selectable cities, map markers, th
 - Favorite cities saved in the browser
 - Shareable links that preserve selected cities, theme, language, and focus location
 - Language dropdown for English, Spanish, French, Hindi, and Japanese UI labels
+- Localized language and city dropdown labels that update when the selected language changes
 - Focus location dropdown that spotlights a city and pans the map to it
 - Theme switching between Aurora, Sunset, and Midnight
 
