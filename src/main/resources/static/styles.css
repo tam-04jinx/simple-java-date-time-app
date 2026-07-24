@@ -160,7 +160,8 @@ h2 {
 .selected-time,
 .city-picker,
 .insight-strip,
-.planner-panel {
+.planner-panel,
+.preferences-panel {
     padding: 20px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -201,12 +202,39 @@ strong {
     font-weight: 750;
 }
 
-.planner-panel {
+.planner-panel,
+.preferences-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
     gap: 18px;
     align-items: center;
     margin-top: 18px;
+}
+
+.planner-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.preferences-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field-control {
+    display: grid;
+    gap: 8px;
+}
+
+.field-control select,
+.city-picker select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.field-control select {
+    min-height: 44px;
+    padding: 8px 10px;
 }
 
 .favorite-list {
@@ -242,14 +270,9 @@ strong {
 }
 
 .city-picker select {
-    width: 100%;
     min-height: 190px;
     margin-top: 10px;
     padding: 10px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: #0f172a;
-    background: rgba(255, 255, 255, 0.92);
 }
 
 .city-picker option {
@@ -478,8 +501,8 @@ strong {
     border-left: 4px solid #818cf8;
 }
 
-.timezone-card.is-work-friendly::after,
-.timezone-card.is-after-hours::after {
+.timezone-card::after {
+    content: attr(data-work-label);
     position: absolute;
     right: 12px;
     bottom: 12px;
@@ -490,13 +513,11 @@ strong {
 }
 
 .timezone-card.is-work-friendly::after {
-    content: "Work OK";
     color: #052e1a;
     background: #86efac;
 }
 
 .timezone-card.is-after-hours::after {
-    content: "After hours";
     color: #451a03;
     background: #fdba74;
 }
@@ -582,6 +603,7 @@ strong {
     .datetime-panel,
     .insight-strip,
     .planner-panel,
+    .preferences-panel,
     .timezone-grid {
         grid-template-columns: 1fr;
     }

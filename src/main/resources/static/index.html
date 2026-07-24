@@ -12,66 +12,83 @@
         <section class="card">
             <div class="hero">
                 <div>
-                    <span class="eyebrow">Live global timeboard</span>
-                    <h1>World Clock</h1>
+                    <span class="eyebrow" data-i18n="heroEyebrow">Live global timeboard</span>
+                    <h1 data-i18n="appTitle">World Clock</h1>
                 </div>
 
-                <div class="theme-switcher" aria-label="Color theme">
-                    <button class="theme-button" type="button" data-theme="aurora" aria-pressed="true">Aurora</button>
-                    <button class="theme-button" type="button" data-theme="sunset" aria-pressed="false">Sunset</button>
-                    <button class="theme-button" type="button" data-theme="midnight" aria-pressed="false">Midnight</button>
+                <div class="theme-switcher" aria-label="Color theme" data-i18n-aria-label="themeAria">
+                    <button class="theme-button" type="button" data-theme="aurora" aria-pressed="true" data-i18n="themeAurora">Aurora</button>
+                    <button class="theme-button" type="button" data-theme="sunset" aria-pressed="false" data-i18n="themeSunset">Sunset</button>
+                    <button class="theme-button" type="button" data-theme="midnight" aria-pressed="false" data-i18n="themeMidnight">Midnight</button>
                 </div>
             </div>
 
             <div class="datetime-panel">
                 <div>
-                    <span class="label">Server Date</span>
+                    <span class="label" data-i18n="serverDate">Server Date</span>
                     <strong id="date">Loading...</strong>
                 </div>
                 <div>
-                    <span class="label">Server Time</span>
+                    <span class="label" data-i18n="serverTime">Server Time</span>
                     <strong id="time">Loading...</strong>
                 </div>
             </div>
 
             <p class="timezone">
-                Server timezone: <span id="timezone">Loading...</span>
+                <span data-i18n="serverTimezone">Server timezone:</span> <span id="timezone">Loading...</span>
             </p>
 
             <div class="insight-strip" aria-live="polite">
                 <span id="city-count">0 cities selected</span>
                 <span id="time-spread">Waiting for city data</span>
                 <span id="meeting-window">Meeting window pending</span>
-                <span id="next-refresh">Refreshes every second</span>
+                <span id="next-refresh" data-i18n="refreshesEverySecond">Refreshes every second</span>
             </div>
 
             <div class="planner-panel">
                 <div>
-                    <span class="label">Favorite cities</span>
+                    <span class="label" data-i18n="favoriteCities">Favorite cities</span>
                     <div id="favorite-list" class="favorite-list" aria-live="polite"></div>
                 </div>
                 <div class="share-tools">
-                    <button id="share-button" type="button">Copy Share Link</button>
-                    <span id="share-status" role="status">Selections save automatically</span>
+                    <button id="share-button" type="button" data-i18n="copyShareLink">Copy Share Link</button>
+                    <span id="share-status" role="status" data-i18n="autosaveStatus">Selections save automatically</span>
                 </div>
             </div>
 
-            <div class="city-picker">
-                <label class="label" for="city-select">Choose cities to show on the map</label>
-                <select id="city-select" multiple size="8" aria-describedby="city-help"></select>
-                <p id="city-help" class="timezone">Hold Cmd on Mac or Ctrl on Windows to select multiple cities. Click a card or map pin to spotlight a city.</p>
+            <div class="preferences-panel">
+                <label class="field-control" for="language-select">
+                    <span class="label" data-i18n="languageLabel">Language</span>
+                    <select id="language-select" aria-label="Language" data-i18n-aria-label="languageLabel">
+                        <option value="en">English</option>
+                        <option value="es">Espanol</option>
+                        <option value="fr">Francais</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ja">Japanese</option>
+                    </select>
+                </label>
+                <label class="field-control" for="location-select">
+                    <span class="label" data-i18n="locationLabel">Focus location</span>
+                    <select id="location-select" aria-label="Focus location" data-i18n-aria-label="locationLabel"></select>
+                </label>
             </div>
 
-            <h2>Selected cities on the map</h2>
+            <div class="city-picker">
+                <label class="label" for="city-select" data-i18n="cityPickerLabel">Choose cities to show on the map</label>
+                <select id="city-select" multiple size="8" aria-describedby="city-help"></select>
+                <p id="city-help" class="timezone" data-i18n="cityHelp">Hold Cmd on Mac or Ctrl on Windows to select multiple cities. Click a card or map pin to spotlight a city.</p>
+            </div>
+
+            <h2 data-i18n="mapHeading">Selected cities on the map</h2>
             <div class="map-shell">
-                <div id="world-map" class="world-map" aria-label="Interactive world map"></div>
+                <div id="world-map" class="world-map" aria-label="Interactive world map" data-i18n-aria-label="mapAria"></div>
                 <canvas id="daylight-canvas" class="daylight-canvas" aria-hidden="true"></canvas>
-                <div class="sunlight-status" id="sunlight-status" aria-live="polite">Calculating sunlight</div>
-                <div class="map-legend" aria-label="Day and night legend">
-                    <span><i class="legend-dot legend-day"></i> Day</span>
-                    <span><i class="legend-dot legend-twilight"></i> Twilight</span>
-                    <span><i class="legend-dot legend-night"></i> Night</span>
-                    <span><i class="legend-dot legend-shadow"></i> Map shadow</span>
+                <div class="sunlight-status" id="sunlight-status" aria-live="polite" data-i18n="calculatingSunlight">Calculating sunlight</div>
+                <div class="map-legend" aria-label="Day and night legend" data-i18n-aria-label="legendAria">
+                    <span><i class="legend-dot legend-day"></i> <b data-i18n="day">Day</b></span>
+                    <span><i class="legend-dot legend-twilight"></i> <b data-i18n="twilight">Twilight</b></span>
+                    <span><i class="legend-dot legend-night"></i> <b data-i18n="night">Night</b></span>
+                    <span><i class="legend-dot legend-shadow"></i> <b data-i18n="mapShadow">Map shadow</b></span>
                 </div>
             </div>
 
@@ -79,10 +96,10 @@
                 Select a city on the map to see the local time.
             </section>
 
-            <h2>Selected Time Zones</h2>
+            <h2 data-i18n="selectedTimeZones">Selected Time Zones</h2>
             <div id="timezone-list" class="timezone-grid" aria-live="polite"></div>
 
-            <button id="refresh-button" type="button">Refresh Now</button>
+            <button id="refresh-button" type="button" data-i18n="refreshNow">Refresh Now</button>
         </section>
     </main>
 

@@ -4,6 +4,8 @@ const timezoneElement = document.querySelector("#timezone");
 const timezoneListElement = document.querySelector("#timezone-list");
 const selectedTimeElement = document.querySelector("#selected-time");
 const citySelectElement = document.querySelector("#city-select");
+const languageSelectElement = document.querySelector("#language-select");
+const locationSelectElement = document.querySelector("#location-select");
 const cityCountElement = document.querySelector("#city-count");
 const timeSpreadElement = document.querySelector("#time-spread");
 const meetingWindowElement = document.querySelector("#meeting-window");
@@ -34,15 +36,304 @@ const cityCoordinates = {
     Auckland: [-36.8485, 174.7633]
 };
 
+const translations = {
+    en: {
+        heroEyebrow: "Live global timeboard",
+        appTitle: "World Clock",
+        themeAria: "Color theme",
+        themeAurora: "Aurora",
+        themeSunset: "Sunset",
+        themeMidnight: "Midnight",
+        serverDate: "Server Date",
+        serverTime: "Server Time",
+        serverTimezone: "Server timezone:",
+        loading: "Loading...",
+        refreshesEverySecond: "Refreshes every second",
+        favoriteCities: "Favorite cities",
+        copyShareLink: "Copy Share Link",
+        autosaveStatus: "Selections save automatically",
+        languageLabel: "Language",
+        locationLabel: "Focus location",
+        cityPickerLabel: "Choose cities to show on the map",
+        cityHelp: "Hold Cmd on Mac or Ctrl on Windows to select multiple cities. Click a card or map pin to spotlight a city.",
+        mapHeading: "Selected cities on the map",
+        mapAria: "Interactive world map",
+        legendAria: "Day and night legend",
+        calculatingSunlight: "Calculating sunlight",
+        day: "Day",
+        twilight: "Twilight",
+        night: "Night",
+        mapShadow: "Map shadow",
+        selectedTimeZones: "Selected Time Zones",
+        refreshNow: "Refresh Now",
+        mapOffline: "Map offline",
+        cardsStillLive: "City cards still update live.",
+        sunlightStatus: "Curved day/night line · sun over {latitude} {longitude}",
+        unavailable: "Unavailable",
+        backendCheck: "Check the Java backend",
+        unableTimeZones: "Unable to load time zones.",
+        unableCityTimes: "Unable to load city times.",
+        selectCityPrompt: "Select a city on the map to see the local time.",
+        selectFromDropdown: "Select cities from the dropdown to show them on the map.",
+        favoriteEmpty: "Mark cards as favorites to pin them here.",
+        noCitiesSelected: "No cities selected.",
+        citySingular: "city",
+        cityPlural: "cities",
+        selected: "selected",
+        waitingData: "Waiting for city data",
+        meetingPending: "Meeting window pending",
+        addCitiesSpread: "Add cities to compare time spread",
+        addCitiesMeeting: "Add cities for meeting insight",
+        hourSpread: "{spread} hour spread across selected cities",
+        allWorkHours: "All selected cities are in work hours",
+        someWorkHours: "{count}/{total} selected cities are in work hours",
+        workHours: "Work hours",
+        afterHours: "After hours",
+        workOk: "Work OK",
+        removeFavorite: "Remove {city} favorite",
+        addFavorite: "Add {city} favorite",
+        shareCopied: "Share link copied"
+    },
+    es: {
+        heroEyebrow: "Panel horario global en vivo",
+        appTitle: "Reloj Mundial",
+        themeAria: "Tema de color",
+        themeAurora: "Aurora",
+        themeSunset: "Atardecer",
+        themeMidnight: "Medianoche",
+        serverDate: "Fecha del servidor",
+        serverTime: "Hora del servidor",
+        serverTimezone: "Zona horaria del servidor:",
+        loading: "Cargando...",
+        refreshesEverySecond: "Se actualiza cada segundo",
+        favoriteCities: "Ciudades favoritas",
+        copyShareLink: "Copiar enlace",
+        autosaveStatus: "Las selecciones se guardan automaticamente",
+        languageLabel: "Idioma",
+        locationLabel: "Ubicacion principal",
+        cityPickerLabel: "Elige ciudades para mostrar en el mapa",
+        cityHelp: "Mantén Cmd en Mac o Ctrl en Windows para seleccionar varias ciudades. Haz clic en una tarjeta o pin para destacar una ciudad.",
+        mapHeading: "Ciudades seleccionadas en el mapa",
+        mapAria: "Mapa mundial interactivo",
+        legendAria: "Leyenda de dia y noche",
+        calculatingSunlight: "Calculando luz solar",
+        day: "Dia",
+        twilight: "Crepusculo",
+        night: "Noche",
+        mapShadow: "Sombra del mapa",
+        selectedTimeZones: "Zonas horarias seleccionadas",
+        refreshNow: "Actualizar ahora",
+        mapOffline: "Mapa sin conexion",
+        cardsStillLive: "Las tarjetas de ciudad siguen actualizandose.",
+        sunlightStatus: "Linea curva de dia/noche · sol sobre {latitude} {longitude}",
+        unavailable: "No disponible",
+        backendCheck: "Revisa el backend Java",
+        unableTimeZones: "No se pudieron cargar las zonas horarias.",
+        unableCityTimes: "No se pudieron cargar las horas de las ciudades.",
+        selectCityPrompt: "Selecciona una ciudad en el mapa para ver la hora local.",
+        selectFromDropdown: "Selecciona ciudades en el desplegable para mostrarlas en el mapa.",
+        favoriteEmpty: "Marca tarjetas como favoritas para fijarlas aqui.",
+        noCitiesSelected: "No hay ciudades seleccionadas.",
+        citySingular: "ciudad",
+        cityPlural: "ciudades",
+        selected: "seleccionadas",
+        waitingData: "Esperando datos de ciudad",
+        meetingPending: "Ventana de reunion pendiente",
+        addCitiesSpread: "Agrega ciudades para comparar la diferencia horaria",
+        addCitiesMeeting: "Agrega ciudades para ver reuniones",
+        hourSpread: "Diferencia de {spread} horas entre ciudades seleccionadas",
+        allWorkHours: "Todas las ciudades seleccionadas estan en horario laboral",
+        someWorkHours: "{count}/{total} ciudades seleccionadas estan en horario laboral",
+        workHours: "Horario laboral",
+        afterHours: "Fuera de horario",
+        workOk: "Laboral OK",
+        removeFavorite: "Quitar {city} de favoritos",
+        addFavorite: "Agregar {city} a favoritos",
+        shareCopied: "Enlace copiado"
+    },
+    fr: {
+        heroEyebrow: "Tableau horaire mondial en direct",
+        appTitle: "Horloge Mondiale",
+        themeAria: "Theme couleur",
+        themeAurora: "Aurore",
+        themeSunset: "Coucher",
+        themeMidnight: "Minuit",
+        serverDate: "Date serveur",
+        serverTime: "Heure serveur",
+        serverTimezone: "Fuseau serveur :",
+        loading: "Chargement...",
+        refreshesEverySecond: "Actualisation chaque seconde",
+        favoriteCities: "Villes favorites",
+        copyShareLink: "Copier le lien",
+        autosaveStatus: "Selections enregistrees automatiquement",
+        languageLabel: "Langue",
+        locationLabel: "Lieu cible",
+        cityPickerLabel: "Choisir les villes a afficher sur la carte",
+        cityHelp: "Maintenez Cmd sur Mac ou Ctrl sur Windows pour choisir plusieurs villes. Cliquez une carte ou une epingle pour cibler une ville.",
+        mapHeading: "Villes selectionnees sur la carte",
+        mapAria: "Carte mondiale interactive",
+        legendAria: "Legende jour et nuit",
+        calculatingSunlight: "Calcul de la lumiere solaire",
+        day: "Jour",
+        twilight: "Crepuscule",
+        night: "Nuit",
+        mapShadow: "Ombre carte",
+        selectedTimeZones: "Fuseaux horaires selectionnes",
+        refreshNow: "Actualiser",
+        mapOffline: "Carte hors ligne",
+        cardsStillLive: "Les cartes de ville restent a jour.",
+        sunlightStatus: "Ligne courbe jour/nuit · soleil sur {latitude} {longitude}",
+        unavailable: "Indisponible",
+        backendCheck: "Verifier le backend Java",
+        unableTimeZones: "Impossible de charger les fuseaux horaires.",
+        unableCityTimes: "Impossible de charger les heures des villes.",
+        selectCityPrompt: "Selectionnez une ville sur la carte pour voir l'heure locale.",
+        selectFromDropdown: "Selectionnez des villes dans la liste pour les afficher sur la carte.",
+        favoriteEmpty: "Marquez des cartes comme favorites pour les epingler ici.",
+        noCitiesSelected: "Aucune ville selectionnee.",
+        citySingular: "ville",
+        cityPlural: "villes",
+        selected: "selectionnees",
+        waitingData: "En attente des donnees de ville",
+        meetingPending: "Fenetre de reunion en attente",
+        addCitiesSpread: "Ajoutez des villes pour comparer l'ecart horaire",
+        addCitiesMeeting: "Ajoutez des villes pour l'indice de reunion",
+        hourSpread: "Ecart de {spread} heures entre les villes selectionnees",
+        allWorkHours: "Toutes les villes selectionnees sont en heures de travail",
+        someWorkHours: "{count}/{total} villes selectionnees sont en heures de travail",
+        workHours: "Heures de travail",
+        afterHours: "Hors horaires",
+        workOk: "Travail OK",
+        removeFavorite: "Retirer {city} des favoris",
+        addFavorite: "Ajouter {city} aux favoris",
+        shareCopied: "Lien copie"
+    },
+    hi: {
+        heroEyebrow: "लाइव वैश्विक समय बोर्ड",
+        appTitle: "विश्व घड़ी",
+        themeAria: "रंग थीम",
+        themeAurora: "ऑरोरा",
+        themeSunset: "सूर्यास्त",
+        themeMidnight: "मिडनाइट",
+        serverDate: "सर्वर तारीख",
+        serverTime: "सर्वर समय",
+        serverTimezone: "सर्वर समय क्षेत्र:",
+        loading: "लोड हो रहा है...",
+        refreshesEverySecond: "हर सेकंड अपडेट होता है",
+        favoriteCities: "पसंदीदा शहर",
+        copyShareLink: "शेयर लिंक कॉपी करें",
+        autosaveStatus: "चयन अपने आप सेव होते हैं",
+        languageLabel: "भाषा",
+        locationLabel: "मुख्य स्थान",
+        cityPickerLabel: "मैप पर दिखाने के लिए शहर चुनें",
+        cityHelp: "कई शहर चुनने के लिए Mac पर Cmd या Windows पर Ctrl दबाएं। किसी शहर को हाइलाइट करने के लिए कार्ड या पिन पर क्लिक करें।",
+        mapHeading: "मैप पर चुने गए शहर",
+        mapAria: "इंटरैक्टिव विश्व मैप",
+        legendAria: "दिन और रात की लेजेंड",
+        calculatingSunlight: "सूर्य प्रकाश की गणना हो रही है",
+        day: "दिन",
+        twilight: "संध्या",
+        night: "रात",
+        mapShadow: "मैप शैडो",
+        selectedTimeZones: "चुने गए समय क्षेत्र",
+        refreshNow: "अभी रिफ्रेश करें",
+        mapOffline: "मैप ऑफलाइन है",
+        cardsStillLive: "शहर कार्ड फिर भी लाइव अपडेट होते हैं।",
+        sunlightStatus: "मुड़ी दिन/रात रेखा · सूरज {latitude} {longitude} पर",
+        unavailable: "उपलब्ध नहीं",
+        backendCheck: "Java backend जांचें",
+        unableTimeZones: "समय क्षेत्र लोड नहीं हो सके।",
+        unableCityTimes: "शहरों के समय लोड नहीं हो सके।",
+        selectCityPrompt: "लोकल समय देखने के लिए मैप पर शहर चुनें।",
+        selectFromDropdown: "मैप पर दिखाने के लिए dropdown से शहर चुनें।",
+        favoriteEmpty: "यहां पिन करने के लिए कार्ड को favorite करें।",
+        noCitiesSelected: "कोई शहर चयनित नहीं।",
+        citySingular: "शहर",
+        cityPlural: "शहर",
+        selected: "चयनित",
+        waitingData: "शहर डेटा की प्रतीक्षा",
+        meetingPending: "मीटिंग विंडो लंबित",
+        addCitiesSpread: "समय अंतर की तुलना के लिए शहर जोड़ें",
+        addCitiesMeeting: "मीटिंग संकेत के लिए शहर जोड़ें",
+        hourSpread: "चुने शहरों में {spread} घंटे का अंतर",
+        allWorkHours: "सभी चुने शहर work hours में हैं",
+        someWorkHours: "{count}/{total} चुने शहर work hours में हैं",
+        workHours: "Work hours",
+        afterHours: "After hours",
+        workOk: "Work OK",
+        removeFavorite: "{city} favorite हटाएं",
+        addFavorite: "{city} favorite जोड़ें",
+        shareCopied: "शेयर लिंक कॉपी हुआ"
+    },
+    ja: {
+        heroEyebrow: "ライブ世界タイムボード",
+        appTitle: "世界時計",
+        themeAria: "カラーテーマ",
+        themeAurora: "オーロラ",
+        themeSunset: "サンセット",
+        themeMidnight: "ミッドナイト",
+        serverDate: "サーバー日付",
+        serverTime: "サーバー時刻",
+        serverTimezone: "サーバータイムゾーン:",
+        loading: "読み込み中...",
+        refreshesEverySecond: "毎秒更新",
+        favoriteCities: "お気に入り都市",
+        copyShareLink: "共有リンクをコピー",
+        autosaveStatus: "選択は自動保存されます",
+        languageLabel: "言語",
+        locationLabel: "フォーカス地点",
+        cityPickerLabel: "地図に表示する都市を選択",
+        cityHelp: "複数選択はMacではCmd、WindowsではCtrlを押します。カードまたはピンをクリックすると都市を強調します。",
+        mapHeading: "地図上の選択都市",
+        mapAria: "インタラクティブ世界地図",
+        legendAria: "昼夜凡例",
+        calculatingSunlight: "日照を計算中",
+        day: "昼",
+        twilight: "薄明",
+        night: "夜",
+        mapShadow: "地図の影",
+        selectedTimeZones: "選択したタイムゾーン",
+        refreshNow: "今すぐ更新",
+        mapOffline: "地図はオフラインです",
+        cardsStillLive: "都市カードはライブ更新されます。",
+        sunlightStatus: "曲線の昼夜ライン · 太陽は {latitude} {longitude} 上",
+        unavailable: "利用不可",
+        backendCheck: "Javaバックエンドを確認してください",
+        unableTimeZones: "タイムゾーンを読み込めません。",
+        unableCityTimes: "都市時刻を読み込めません。",
+        selectCityPrompt: "地図で都市を選択すると現地時刻が表示されます。",
+        selectFromDropdown: "地図に表示する都市をドロップダウンから選択してください。",
+        favoriteEmpty: "カードをお気に入りにするとここに固定されます。",
+        noCitiesSelected: "都市が選択されていません。",
+        citySingular: "都市",
+        cityPlural: "都市",
+        selected: "選択中",
+        waitingData: "都市データを待機中",
+        meetingPending: "会議時間の確認待ち",
+        addCitiesSpread: "時差を比較する都市を追加してください",
+        addCitiesMeeting: "会議の目安を見る都市を追加してください",
+        hourSpread: "選択都市間の時差は{spread}時間",
+        allWorkHours: "選択したすべての都市が勤務時間内です",
+        someWorkHours: "{count}/{total} の都市が勤務時間内です",
+        workHours: "勤務時間",
+        afterHours: "時間外",
+        workOk: "勤務OK",
+        removeFavorite: "{city}をお気に入りから削除",
+        addFavorite: "{city}をお気に入りに追加",
+        shareCopied: "共有リンクをコピーしました"
+    }
+};
+
 const defaultSelectedCities = ["Austin", "New York", "London", "Hyderabad", "Tokyo", "Sydney"];
 const workdayStartHour = 9;
 const workdayEndHour = 17;
 const daylightRenderScale = 0.5;
 
 let latestTimeZones = [];
-let selectedCity = "Austin";
+let selectedCity = loadInitialLocation();
 let selectedCities = loadInitialCities();
 let favoriteCities = loadFavoriteCities();
+let currentLanguage = loadInitialLanguage();
 let worldMap;
 let cityMarkers = {};
 let mapAvailable = false;
@@ -58,6 +349,20 @@ function loadInitialCities() {
     return Array.isArray(savedCities) && savedCities.length > 0 ? savedCities : [...defaultSelectedCities];
 }
 
+function loadInitialLocation() {
+    return new URLSearchParams(window.location.search).get("location")
+        || localStorage.getItem("worldClockLocation")
+        || "Austin";
+}
+
+function loadInitialLanguage() {
+    const params = new URLSearchParams(window.location.search);
+    const sharedLanguage = params.get("lang");
+    const savedLanguage = localStorage.getItem("worldClockLanguage");
+    const browserLanguage = navigator.language?.slice(0, 2);
+    return [sharedLanguage, savedLanguage, browserLanguage, "en"].find(language => translations[language]) || "en";
+}
+
 function loadFavoriteCities() {
     const savedFavorites = JSON.parse(localStorage.getItem("worldClockFavoriteCities") || "null");
     return Array.isArray(savedFavorites) ? savedFavorites : ["Austin", "London"];
@@ -66,27 +371,62 @@ function loadFavoriteCities() {
 function persistSelections() {
     localStorage.setItem("worldClockSelectedCities", JSON.stringify(selectedCities));
     localStorage.setItem("worldClockFavoriteCities", JSON.stringify(favoriteCities));
+    localStorage.setItem("worldClockLocation", selectedCity);
+    localStorage.setItem("worldClockLanguage", currentLanguage);
 }
 
 function updateUrlState() {
     const url = new URL(window.location.href);
     url.searchParams.set("cities", selectedCities.join(","));
     url.searchParams.set("theme", document.body.dataset.theme || "aurora");
+    url.searchParams.set("lang", currentLanguage);
+    if (selectedCity) {
+        url.searchParams.set("location", selectedCity);
+    }
     window.history.replaceState({}, "", url);
+}
+
+function translate(key, values = {}) {
+    const phrase = translations[currentLanguage]?.[key] || translations.en[key] || key;
+    return phrase.replace(/\{(\w+)\}/g, (_, name) => values[name] ?? "");
+}
+
+function applyLanguage(language) {
+    currentLanguage = translations[language] ? language : "en";
+    document.documentElement.lang = currentLanguage;
+    if (languageSelectElement) {
+        languageSelectElement.value = currentLanguage;
+    }
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        element.textContent = translate(element.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
+        element.setAttribute("aria-label", translate(element.dataset.i18nAriaLabel));
+    });
+
+    if (latestTimeZones.length > 0) {
+        renderSelectedView();
+        updateInsights();
+        scheduleDaylightRender();
+    }
+
+    persistSelections();
+    updateUrlState();
 }
 
 function getDayPhase(dateTime) {
     const hour = getHourFromDateTime(dateTime);
 
     if (hour >= 6 && hour < 18) {
-        return { icon: "☀", label: "Day", value: "day" };
+        return { icon: "☀", label: translate("day"), value: "day" };
     }
 
     if ((hour >= 5 && hour < 6) || (hour >= 18 && hour < 20)) {
-        return { icon: "◐", label: "Twilight", value: "twilight" };
+        return { icon: "◐", label: translate("twilight"), value: "twilight" };
     }
 
-    return { icon: "☾", label: "Night", value: "night" };
+    return { icon: "☾", label: translate("night"), value: "night" };
 }
 
 function getWorkWindow(dateTime) {
@@ -94,7 +434,8 @@ function getWorkWindow(dateTime) {
     const friendly = hour >= workdayStartHour && hour < workdayEndHour;
     return {
         friendly,
-        label: friendly ? "Work hours" : "After hours"
+        label: friendly ? translate("workHours") : translate("afterHours"),
+        badge: friendly ? translate("workOk") : translate("afterHours")
     };
 }
 
@@ -111,8 +452,8 @@ function initializeMap() {
     if (typeof L === "undefined") {
         document.querySelector("#world-map").innerHTML = `
             <div class="map-fallback">
-                <span>Map offline</span>
-                <strong>City cards still update live.</strong>
+                <span>${translate("mapOffline")}</span>
+                <strong>${translate("cardsStillLive")}</strong>
             </div>
         `;
         scheduleDaylightRender();
@@ -182,7 +523,10 @@ function renderDaylightTerminator() {
     context.putImageData(image, 0, 0);
 
     if (sunlightStatusElement) {
-        sunlightStatusElement.textContent = `Curved day/night line · sun over ${formatLatitude(solar.declination)} ${formatLongitude(solar.subsolarLongitude)}`;
+        sunlightStatusElement.textContent = translate("sunlightStatus", {
+            latitude: formatLatitude(solar.declination),
+            longitude: formatLongitude(solar.subsolarLongitude)
+        });
     }
 }
 
@@ -291,23 +635,31 @@ async function loadDateTime() {
         if (selectedCities.length === 0) {
             selectedCities = [...defaultSelectedCities];
         }
+        if (!latestTimeZones.some(timeZone => timeZone.city === selectedCity)) {
+            selectedCity = selectedCities[0] || latestTimeZones[0]?.city || "";
+        }
+        if (selectedCity && !selectedCities.includes(selectedCity)) {
+            selectedCities = [...selectedCities, selectedCity];
+        }
 
         dateElement.textContent = dateTime.date;
         timeElement.textContent = dateTime.time;
         timezoneElement.textContent = dateTime.timeZone;
         renderCitySelect(latestTimeZones);
+        renderLocationSelect(latestTimeZones);
         syncCitySelect();
+        syncLocationSelect();
         renderSelectedView();
         updateInsights();
         scheduleDaylightRender();
         persistSelections();
         updateUrlState();
     } catch (error) {
-        dateElement.textContent = "Unavailable";
-        timeElement.textContent = "Unavailable";
-        timezoneElement.textContent = "Check the Java backend";
-        timezoneListElement.innerHTML = "<p class='error'>Unable to load time zones.</p>";
-        selectedTimeElement.textContent = "Unable to load city times.";
+        dateElement.textContent = translate("unavailable");
+        timeElement.textContent = translate("unavailable");
+        timezoneElement.textContent = translate("backendCheck");
+        timezoneListElement.innerHTML = `<p class='error'>${translate("unableTimeZones")}</p>`;
+        selectedTimeElement.textContent = translate("unableCityTimes");
         console.error(error);
     }
 }
@@ -326,10 +678,30 @@ function renderCitySelect(timeZones) {
         .join("");
 }
 
+function renderLocationSelect(timeZones) {
+    if (!locationSelectElement || locationSelectElement.options.length > 0) {
+        return;
+    }
+
+    locationSelectElement.innerHTML = timeZones
+        .map(timeZone => `
+            <option value="${timeZone.city}">
+                ${timeZone.city}
+            </option>
+        `)
+        .join("");
+}
+
 function syncCitySelect() {
     Array.from(citySelectElement.options).forEach(option => {
         option.selected = selectedCities.includes(option.value);
     });
+}
+
+function syncLocationSelect() {
+    if (locationSelectElement) {
+        locationSelectElement.value = selectedCity;
+    }
 }
 
 function getSelectedTimeZones() {
@@ -347,6 +719,7 @@ function renderSelectedView() {
     renderMapMarkers(selectedTimeZones);
     renderTimeZones(selectedTimeZones);
     showSelectedCity(selectedCity);
+    syncLocationSelect();
 }
 
 function renderMapMarkers(timeZones) {
@@ -380,10 +753,7 @@ function renderMapMarkers(timeZones) {
                     direction: "top",
                     offset: [0, -12]
                 })
-                .on("click", () => {
-                    selectedCity = timeZone.city;
-                    showSelectedCity(selectedCity);
-                });
+                .on("click", () => focusLocation(timeZone.city, { shouldPan: false }));
 
             cityMarkers[timeZone.city] = marker;
         });
@@ -393,7 +763,7 @@ function showSelectedCity(city) {
     const timeZone = latestTimeZones.find(item => item.city === city);
 
     if (!timeZone) {
-        selectedTimeElement.textContent = "Select cities from the dropdown to show them on the map.";
+        selectedTimeElement.textContent = latestTimeZones.length > 0 ? translate("selectFromDropdown") : translate("selectCityPrompt");
         return;
     }
 
@@ -414,11 +784,33 @@ function showSelectedCity(city) {
     document.querySelectorAll(".timezone-card").forEach(card => {
         card.classList.toggle("is-active", card.dataset.city === timeZone.city);
     });
+    syncLocationSelect();
+}
+
+function focusLocation(city, options = {}) {
+    if (!city) {
+        return;
+    }
+
+    selectedCity = city;
+    if (!selectedCities.includes(city)) {
+        selectedCities = [...selectedCities, city];
+        syncCitySelect();
+    }
+
+    renderSelectedView();
+    updateInsights();
+    persistSelections();
+    updateUrlState();
+
+    if (options.shouldPan !== false && mapAvailable && cityCoordinates[city]) {
+        worldMap.flyTo(cityCoordinates[city], Math.max(worldMap.getZoom(), 4), { duration: 0.8 });
+    }
 }
 
 function renderFavorites() {
     if (favoriteCities.length === 0) {
-        favoriteListElement.innerHTML = "<span class='favorite-empty'>Mark cards as favorites to pin them here.</span>";
+        favoriteListElement.innerHTML = `<span class='favorite-empty'>${translate("favoriteEmpty")}</span>`;
         return;
     }
 
@@ -432,23 +824,13 @@ function renderFavorites() {
         .join("");
 
     favoriteListElement.querySelectorAll(".favorite-chip").forEach(button => {
-        button.addEventListener("click", () => {
-            if (!selectedCities.includes(button.dataset.city)) {
-                selectedCities = [...selectedCities, button.dataset.city];
-            }
-            selectedCity = button.dataset.city;
-            syncCitySelect();
-            renderSelectedView();
-            updateInsights();
-            persistSelections();
-            updateUrlState();
-        });
+        button.addEventListener("click", () => focusLocation(button.dataset.city));
     });
 }
 
 function renderTimeZones(timeZones) {
     if (timeZones.length === 0) {
-        timezoneListElement.innerHTML = "<p class='error'>No cities selected.</p>";
+        timezoneListElement.innerHTML = `<p class='error'>${translate("noCitiesSelected")}</p>`;
         return;
     }
 
@@ -458,8 +840,8 @@ function renderTimeZones(timeZones) {
             const workWindow = getWorkWindow(timeZone.dateTime);
             const favorite = favoriteCities.includes(timeZone.city);
             return `
-            <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${timeZone.city}">
-                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? "Remove" : "Add"} ${timeZone.city} favorite" data-city="${timeZone.city}">
+            <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${timeZone.city}" data-work-label="${workWindow.badge}">
+                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? translate("removeFavorite", { city: timeZone.city }) : translate("addFavorite", { city: timeZone.city })}" data-city="${timeZone.city}">
                     ${favorite ? "★" : "☆"}
                 </button>
                 <button class="timezone-card-main" type="button" data-city="${timeZone.city}">
@@ -475,10 +857,7 @@ function renderTimeZones(timeZones) {
         .join("");
 
     timezoneListElement.querySelectorAll(".timezone-card-main").forEach(card => {
-        card.addEventListener("click", () => {
-            selectedCity = card.dataset.city;
-            showSelectedCity(selectedCity);
-        });
+        card.addEventListener("click", () => focusLocation(card.dataset.city));
     });
 
     timezoneListElement.querySelectorAll(".favorite-button").forEach(button => {
@@ -503,12 +882,13 @@ function getHourFromDateTime(dateTime) {
 
 function updateInsights() {
     const selectedTimeZones = getSelectedTimeZones();
+    const cityLabel = selectedTimeZones.length === 1 ? translate("citySingular") : translate("cityPlural");
 
-    cityCountElement.textContent = `${selectedTimeZones.length} ${selectedTimeZones.length === 1 ? "city" : "cities"} selected`;
+    cityCountElement.textContent = `${selectedTimeZones.length} ${cityLabel} ${translate("selected")}`;
 
     if (selectedTimeZones.length < 2) {
-        timeSpreadElement.textContent = "Add cities to compare time spread";
-        meetingWindowElement.textContent = "Add cities for meeting insight";
+        timeSpreadElement.textContent = translate("addCitiesSpread");
+        meetingWindowElement.textContent = translate("addCitiesMeeting");
         return;
     }
 
@@ -522,10 +902,10 @@ function updateInsights() {
     const spread = 24 - Math.max(...gaps);
     const workFriendlyCount = selectedTimeZones.filter(timeZone => getWorkWindow(timeZone.dateTime).friendly).length;
 
-    timeSpreadElement.textContent = `${spread} hour spread across selected cities`;
+    timeSpreadElement.textContent = translate("hourSpread", { spread });
     meetingWindowElement.textContent = workFriendlyCount === selectedTimeZones.length
-        ? "All selected cities are in work hours"
-        : `${workFriendlyCount}/${selectedTimeZones.length} selected cities are in work hours`;
+        ? translate("allWorkHours")
+        : translate("someWorkHours", { count: workFriendlyCount, total: selectedTimeZones.length });
 }
 
 function copyShareLink() {
@@ -534,7 +914,7 @@ function copyShareLink() {
 
     if (navigator.clipboard) {
         navigator.clipboard.writeText(shareUrl).then(() => {
-            shareStatusElement.textContent = "Share link copied";
+            shareStatusElement.textContent = translate("shareCopied");
         });
         return;
     }
@@ -550,12 +930,15 @@ citySelectElement.addEventListener("change", () => {
     updateUrlState();
 });
 
+languageSelectElement.addEventListener("change", () => applyLanguage(languageSelectElement.value));
+locationSelectElement.addEventListener("change", () => focusLocation(locationSelectElement.value));
 refreshButton.addEventListener("click", loadDateTime);
 shareButton.addEventListener("click", copyShareLink);
 themeButtons.forEach(button => {
     button.addEventListener("click", () => applyTheme(button.dataset.theme));
 });
 
+applyLanguage(currentLanguage);
 applyTheme(new URLSearchParams(window.location.search).get("theme") || localStorage.getItem("worldClockTheme") || "aurora");
 initializeMap();
 loadDateTime();
