@@ -26,16 +26,16 @@
             <div class="datetime-panel">
                 <div>
                     <span class="label" data-i18n="serverDate">Server Date</span>
-                    <strong id="date" data-i18n="loading">Loading...</strong>
+                    <strong id="date">Loading...</strong>
                 </div>
                 <div>
                     <span class="label" data-i18n="serverTime">Server Time</span>
-                    <strong id="time" data-i18n="loading">Loading...</strong>
+                    <strong id="time">Loading...</strong>
                 </div>
             </div>
 
             <p class="timezone">
-                <span data-i18n="serverTimezone">Server timezone:</span> <span id="timezone" data-i18n="loading">Loading...</span>
+                <span data-i18n="serverTimezone">Server timezone:</span> <span id="timezone">Loading...</span>
             </p>
 
             <div class="insight-strip" aria-live="polite">
@@ -85,10 +85,10 @@
                 <canvas id="daylight-canvas" class="daylight-canvas" aria-hidden="true"></canvas>
                 <div class="sunlight-status" id="sunlight-status" aria-live="polite" data-i18n="calculatingSunlight">Calculating sunlight</div>
                 <div class="map-legend" aria-label="Day and night legend" data-i18n-aria-label="legendAria">
-                    <span><i class="legend-dot legend-day"></i> <span data-i18n="day">Day</span></span>
-                    <span><i class="legend-dot legend-twilight"></i> <span data-i18n="twilight">Twilight</span></span>
-                    <span><i class="legend-dot legend-night"></i> <span data-i18n="night">Night</span></span>
-                    <span><i class="legend-dot legend-shadow"></i> <span data-i18n="mapShadow">Map shadow</span></span>
+                    <span><i class="legend-dot legend-day"></i> <b data-i18n="day">Day</b></span>
+                    <span><i class="legend-dot legend-twilight"></i> <b data-i18n="twilight">Twilight</b></span>
+                    <span><i class="legend-dot legend-night"></i> <b data-i18n="night">Night</b></span>
+                    <span><i class="legend-dot legend-shadow"></i> <b data-i18n="mapShadow">Map shadow</b></span>
                 </div>
             </div>
 
