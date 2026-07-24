@@ -10,7 +10,7 @@ const meetingWindowElement = document.querySelector("#meeting-window");
 const favoriteListElement = document.querySelector("#favorite-list");
 const shareButton = document.querySelector("#share-button");
 const shareStatusElement = document.querySelector("#share-status");
-const sunlightOverlayElement = document.querySelector("#sunlight-overlay");
+const daylightCanvasElement = document.querySelector("#daylight-canvas");
 const sunlightStatusElement = document.querySelector("#sunlight-status");
 const themeButtons = document.querySelectorAll(".theme-button");
 const refreshButton = document.querySelector("#refresh-button");
@@ -37,6 +37,7 @@ const cityCoordinates = {
 const defaultSelectedCities = ["Austin", "New York", "London", "Hyderabad", "Tokyo", "Sydney"];
 const workdayStartHour = 9;
 const workdayEndHour = 17;
+const daylightRenderScale = 0.5;
 
 let latestTimeZones = [];
 let selectedCity = "Austin";
@@ -45,6 +46,7 @@ let favoriteCities = loadFavoriteCities();
 let worldMap;
 let cityMarkers = {};
 let mapAvailable = false;
+let daylightAnimationFrame;
 
 function loadInitialCities() {
     const sharedCities = new URLSearchParams(window.location.search).get("cities");
@@ -113,7 +115,7 @@ function initializeMap() {
                 <strong>City cards still update live.</strong>
             </div>
         `;
-        updateSunlightOverlay();
+        scheduleDaylightRender();
         return;
     }
 
@@ -128,30 +130,118 @@ function initializeMap() {
         attribution: "&copy; OpenStreetMap contributors"
     }).addTo(worldMap);
 
+    worldMap.on("move zoom resize", scheduleDaylightRender);
     mapAvailable = true;
-    updateSunlightOverlay();
+    scheduleDaylightRender();
 }
 
-function updateSunlightOverlay() {
-    if (!sunlightOverlayElement) {
+function scheduleDaylightRender() {
+    if (daylightAnimationFrame) {
+        cancelAnimationFrame(daylightAnimationFrame);
+    }
+
+    daylightAnimationFrame = requestAnimationFrame(renderDaylightTerminator);
+}
+
+function renderDaylightTerminator() {
+    daylightAnimationFrame = null;
+
+    if (!daylightCanvasElement) {
         return;
     }
 
-    const now = new Date();
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes() + now.getUTCSeconds() / 60;
-    const sunLongitude = 180 - (utcMinutes / 1440) * 360;
-    const normalizedSunLongitude = ((sunLongitude + 540) % 360) - 180;
-    const sunX = ((normalizedSunLongitude + 180) / 360) * 100;
-    const shadowX = (sunX + 50) % 100;
-    const twilightWidth = 12 + Math.abs(Math.sin((utcMinutes / 1440) * Math.PI * 2)) * 6;
+    const mapElement = document.querySelector("#world-map");
+    const bounds = mapElement.getBoundingClientRect();
+    const width = Math.max(1, Math.floor(bounds.width * daylightRenderScale));
+    const height = Math.max(1, Math.floor(bounds.height * daylightRenderScale));
 
-    sunlightOverlayElement.style.setProperty("--sun-x", `${sunX}%`);
-    sunlightOverlayElement.style.setProperty("--shadow-x", `${shadowX}%`);
-    sunlightOverlayElement.style.setProperty("--twilight-width", `${twilightWidth}%`);
+    daylightCanvasElement.width = width;
+    daylightCanvasElement.height = height;
+
+    const context = daylightCanvasElement.getContext("2d", { willReadFrequently: true });
+    const image = context.createImageData(width, height);
+    const solar = getSolarPosition(new Date());
+
+    for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+            const point = [x / daylightRenderScale, y / daylightRenderScale];
+            const latLng = mapAvailable
+                ? worldMap.containerPointToLatLng(point)
+                : approximateLatLngFromPixel(x, y, width, height);
+            const altitude = getSolarAltitude(latLng.lat, latLng.lng, solar);
+            const index = (y * width + x) * 4;
+            const shade = getDaylightShade(altitude);
+
+            image.data[index] = shade[0];
+            image.data[index + 1] = shade[1];
+            image.data[index + 2] = shade[2];
+            image.data[index + 3] = shade[3];
+        }
+    }
+
+    context.putImageData(image, 0, 0);
 
     if (sunlightStatusElement) {
-        sunlightStatusElement.textContent = `Live light at ${formatLongitude(normalizedSunLongitude)} · shadow opposite`;
+        sunlightStatusElement.textContent = `Curved day/night line · sun over ${formatLatitude(solar.declination)} ${formatLongitude(solar.subsolarLongitude)}`;
     }
+}
+
+function getSolarPosition(date) {
+    const dayStart = Date.UTC(date.getUTCFullYear(), 0, 0);
+    const dayOfYear = Math.floor((date.getTime() - dayStart) / 86400000);
+    const utcHours = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+    const gamma = (2 * Math.PI / 365) * (dayOfYear - 1 + (utcHours - 12) / 24);
+    const declination = 0.006918
+        - 0.399912 * Math.cos(gamma)
+        + 0.070257 * Math.sin(gamma)
+        - 0.006758 * Math.cos(2 * gamma)
+        + 0.000907 * Math.sin(2 * gamma)
+        - 0.002697 * Math.cos(3 * gamma)
+        + 0.00148 * Math.sin(3 * gamma);
+    const equationOfTime = 229.18 * (
+        0.000075
+        + 0.001868 * Math.cos(gamma)
+        - 0.032077 * Math.sin(gamma)
+        - 0.014615 * Math.cos(2 * gamma)
+        - 0.040849 * Math.sin(2 * gamma)
+    );
+    const subsolarLongitude = normalizeLongitude((720 - utcHours * 60 - equationOfTime) / 4);
+
+    return { declination: toDegrees(declination), subsolarLongitude };
+}
+
+function getSolarAltitude(latitude, longitude, solar) {
+    const lat = toRadians(Math.max(-85, Math.min(85, latitude)));
+    const declination = toRadians(solar.declination);
+    const hourAngle = toRadians(normalizeLongitude(longitude - solar.subsolarLongitude));
+    const altitude = Math.asin(
+        Math.sin(lat) * Math.sin(declination)
+        + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle)
+    );
+
+    return toDegrees(altitude);
+}
+
+function getDaylightShade(altitude) {
+    if (altitude >= 8) {
+        const glow = Math.min(1, (altitude - 8) / 28);
+        return [255, 235, 172, Math.round(18 + glow * 30)];
+    }
+
+    if (altitude >= -6) {
+        const twilight = (altitude + 6) / 14;
+        return [38, 84, 132, Math.round(124 - twilight * 84)];
+    }
+
+    const depth = Math.min(1, Math.abs(altitude + 6) / 22);
+    return [0, 8, 24, Math.round(128 + depth * 82)];
+}
+
+function approximateLatLngFromPixel(x, y, width, height) {
+    return {
+        lat: 85 - (y / height) * 170,
+        lng: -180 + (x / width) * 360
+    };
 }
 
 function formatLongitude(longitude) {
@@ -161,6 +251,27 @@ function formatLongitude(longitude) {
     }
 
     return longitude > 0 ? `${absoluteLongitude}°E` : `${absoluteLongitude}°W`;
+}
+
+function formatLatitude(latitude) {
+    const absoluteLatitude = Math.round(Math.abs(latitude));
+    if (absoluteLatitude === 0) {
+        return "0°";
+    }
+
+    return latitude > 0 ? `${absoluteLatitude}°N` : `${absoluteLatitude}°S`;
+}
+
+function normalizeLongitude(longitude) {
+    return ((longitude + 540) % 360) - 180;
+}
+
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
 }
 
 async function loadDateTime() {
@@ -188,7 +299,7 @@ async function loadDateTime() {
         syncCitySelect();
         renderSelectedView();
         updateInsights();
-        updateSunlightOverlay();
+        scheduleDaylightRender();
         persistSelections();
         updateUrlState();
     } catch (error) {
@@ -449,4 +560,4 @@ applyTheme(new URLSearchParams(window.location.search).get("theme") || localStor
 initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);
-setInterval(updateSunlightOverlay, 60000);
+setInterval(scheduleDaylightRender, 60000);
