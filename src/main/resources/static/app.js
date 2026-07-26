@@ -16,6 +16,10 @@ const daylightCanvasElement = document.querySelector("#daylight-canvas");
 const sunlightStatusElement = document.querySelector("#sunlight-status");
 const themeButtons = document.querySelectorAll(".theme-button");
 const refreshButton = document.querySelector("#refresh-button");
+const analogClockCaptionElement = document.querySelector("#analog-clock-caption");
+const analogHourHandElement = document.querySelector("#analog-hour-hand");
+const analogMinuteHandElement = document.querySelector("#analog-minute-hand");
+const analogSecondHandElement = document.querySelector("#analog-second-hand");
 
 const cityCoordinates = {
     Austin: [30.2672, -97.7431],
@@ -130,6 +134,8 @@ const translations = {
         serverDate: "Server Date",
         serverTime: "Server Time",
         serverTimezone: "Server timezone:",
+        analogClock: "Analog Clock",
+        focusedLocationClock: "Focused Location Clock",
         loading: "Loading...",
         refreshesEverySecond: "Refreshes every second",
         favoriteCities: "Favorite cities",
@@ -187,6 +193,8 @@ const translations = {
         serverDate: "Fecha del servidor",
         serverTime: "Hora del servidor",
         serverTimezone: "Zona horaria del servidor:",
+        analogClock: "Reloj analogico",
+        focusedLocationClock: "Reloj de ubicacion principal",
         loading: "Cargando...",
         refreshesEverySecond: "Se actualiza cada segundo",
         favoriteCities: "Ciudades favoritas",
@@ -244,6 +252,8 @@ const translations = {
         serverDate: "Date serveur",
         serverTime: "Heure serveur",
         serverTimezone: "Fuseau serveur :",
+        analogClock: "Horloge analogique",
+        focusedLocationClock: "Horloge du lieu cible",
         loading: "Chargement...",
         refreshesEverySecond: "Actualisation chaque seconde",
         favoriteCities: "Villes favorites",
@@ -301,6 +311,8 @@ const translations = {
         serverDate: "सर्वर तारीख",
         serverTime: "सर्वर समय",
         serverTimezone: "सर्वर समय क्षेत्र:",
+        analogClock: "एनालॉग घड़ी",
+        focusedLocationClock: "मुख्य स्थान की घड़ी",
         loading: "लोड हो रहा है...",
         refreshesEverySecond: "हर सेकंड अपडेट होता है",
         favoriteCities: "पसंदीदा शहर",
@@ -358,6 +370,8 @@ const translations = {
         serverDate: "サーバー日付",
         serverTime: "サーバー時刻",
         serverTimezone: "サーバータイムゾーン:",
+        analogClock: "アナログ時計",
+        focusedLocationClock: "フォーカス地点の時計",
         loading: "読み込み中...",
         refreshesEverySecond: "毎秒更新",
         favoriteCities: "お気に入り都市",
@@ -865,6 +879,7 @@ function showSelectedCity(city) {
 
     if (!timeZone) {
         selectedTimeElement.textContent = latestTimeZones.length > 0 ? translate("selectFromDropdown") : translate("selectCityPrompt");
+        renderAnalogClock();
         return;
     }
 
@@ -886,6 +901,32 @@ function showSelectedCity(city) {
         card.classList.toggle("is-active", card.dataset.city === timeZone.city);
     });
     syncLocationSelect();
+    renderAnalogClock(timeZone);
+}
+
+function renderAnalogClock(timeZone) {
+    if (!analogClockCaptionElement || !analogHourHandElement || !analogMinuteHandElement || !analogSecondHandElement) {
+        return;
+    }
+
+    if (!timeZone) {
+        analogClockCaptionElement.textContent = translate("loading");
+        return;
+    }
+
+    const [hourValue = 0, minuteValue = 0, secondValue = 0] = timeZone.time24Hour.split(":").map(Number);
+    const hours = hourValue % 12;
+    const minutes = minuteValue;
+    const seconds = secondValue;
+    const milliseconds = 0;
+    const preciseSeconds = seconds + milliseconds / 1000;
+    const preciseMinutes = minutes + preciseSeconds / 60;
+    const preciseHours = hours + preciseMinutes / 60;
+
+    analogHourHandElement.style.transform = `translateX(-50%) rotate(${preciseHours * 30}deg)`;
+    analogMinuteHandElement.style.transform = `translateX(-50%) rotate(${preciseMinutes * 6}deg)`;
+    analogSecondHandElement.style.transform = `translateX(-50%) rotate(${preciseSeconds * 6}deg)`;
+    analogClockCaptionElement.textContent = `${getCityLabel(timeZone.city)} · ${timeZone.time} · ${timeZone.zoneId}`;
 }
 
 function focusLocation(city, options = {}) {
