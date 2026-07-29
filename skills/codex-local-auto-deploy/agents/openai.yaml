@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Local Auto Deploy"
+  short_description: "Run local deploys after Codex changes"
+  default_prompt: "Use $local-auto-deploy to deploy the app locally after my code changes."

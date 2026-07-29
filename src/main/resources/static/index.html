@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Java Date & Time App</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260728-light-mode-fix" />
 </head>
-<body>
+<body data-mode="dark">
     <main class="page">
         <section class="card">
             <div class="hero">
@@ -16,10 +16,16 @@
                     <h1 data-i18n="appTitle">World Clock</h1>
                 </div>
 
-                <div class="theme-switcher" aria-label="Color theme" data-i18n-aria-label="themeAria">
-                    <button class="theme-button" type="button" data-theme="aurora" aria-pressed="true" data-i18n="themeAurora">Aurora</button>
-                    <button class="theme-button" type="button" data-theme="sunset" aria-pressed="false" data-i18n="themeSunset">Sunset</button>
-                    <button class="theme-button" type="button" data-theme="midnight" aria-pressed="false" data-i18n="themeMidnight">Midnight</button>
+                <div class="display-controls">
+                    <div class="theme-switcher" aria-label="Color theme" data-i18n-aria-label="themeAria">
+                        <button class="theme-button" type="button" data-theme="aurora" aria-pressed="true" data-i18n="themeAurora">Aurora</button>
+                        <button class="theme-button" type="button" data-theme="sunset" aria-pressed="false" data-i18n="themeSunset">Sunset</button>
+                        <button class="theme-button" type="button" data-theme="midnight" aria-pressed="false" data-i18n="themeMidnight">Midnight</button>
+                    </div>
+                    <div class="mode-switcher" aria-label="Display mode" data-i18n-aria-label="modeAria">
+                        <button class="mode-button" type="button" data-mode="dark" aria-pressed="true" data-i18n="modeDark">Dark</button>
+                        <button class="mode-button" type="button" data-mode="light" aria-pressed="false" data-i18n="modeLight">Light</button>
+                    </div>
                 </div>
             </div>
 
@@ -131,6 +137,6 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=20260724-localized-dropdowns"></script>
+    <script src="app.js?v=20260728-light-dark-mode-fix"></script>
 </body>
 </html>

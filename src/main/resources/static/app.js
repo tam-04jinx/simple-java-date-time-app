@@ -15,6 +15,7 @@ const shareStatusElement = document.querySelector("#share-status");
 const daylightCanvasElement = document.querySelector("#daylight-canvas");
 const sunlightStatusElement = document.querySelector("#sunlight-status");
 const themeButtons = document.querySelectorAll(".theme-button");
+const modeButtons = document.querySelectorAll(".mode-button");
 const refreshButton = document.querySelector("#refresh-button");
 const analogClockCaptionElement = document.querySelector("#analog-clock-caption");
 const analogHourHandElement = document.querySelector("#analog-hour-hand");
@@ -131,6 +132,9 @@ const translations = {
         themeAurora: "Aurora",
         themeSunset: "Sunset",
         themeMidnight: "Midnight",
+        modeAria: "Display mode",
+        modeDark: "Dark",
+        modeLight: "Light",
         serverDate: "Server Date",
         serverTime: "Server Time",
         serverTimezone: "Server timezone:",
@@ -190,6 +194,9 @@ const translations = {
         themeAurora: "Aurora",
         themeSunset: "Atardecer",
         themeMidnight: "Medianoche",
+        modeAria: "Modo de pantalla",
+        modeDark: "Oscuro",
+        modeLight: "Claro",
         serverDate: "Fecha del servidor",
         serverTime: "Hora del servidor",
         serverTimezone: "Zona horaria del servidor:",
@@ -249,6 +256,9 @@ const translations = {
         themeAurora: "Aurore",
         themeSunset: "Coucher",
         themeMidnight: "Minuit",
+        modeAria: "Mode d'affichage",
+        modeDark: "Sombre",
+        modeLight: "Clair",
         serverDate: "Date serveur",
         serverTime: "Heure serveur",
         serverTimezone: "Fuseau serveur :",
@@ -308,6 +318,9 @@ const translations = {
         themeAurora: "ऑरोरा",
         themeSunset: "सूर्यास्त",
         themeMidnight: "मिडनाइट",
+        modeAria: "डिस्प्ले मोड",
+        modeDark: "डार्क",
+        modeLight: "लाइट",
         serverDate: "सर्वर तारीख",
         serverTime: "सर्वर समय",
         serverTimezone: "सर्वर समय क्षेत्र:",
@@ -367,6 +380,9 @@ const translations = {
         themeAurora: "オーロラ",
         themeSunset: "サンセット",
         themeMidnight: "ミッドナイト",
+        modeAria: "表示モード",
+        modeDark: "ダーク",
+        modeLight: "ライト",
         serverDate: "サーバー日付",
         serverTime: "サーバー時刻",
         serverTimezone: "サーバータイムゾーン:",
@@ -476,6 +492,7 @@ function updateUrlState() {
     const url = new URL(window.location.href);
     url.searchParams.set("cities", selectedCities.join(","));
     url.searchParams.set("theme", document.body.dataset.theme || "aurora");
+    url.searchParams.set("mode", document.body.dataset.mode || "dark");
     url.searchParams.set("lang", currentLanguage);
     if (selectedCity) {
         url.searchParams.set("location", selectedCity);
@@ -563,6 +580,16 @@ function applyTheme(theme) {
         button.setAttribute("aria-pressed", String(button.dataset.theme === theme));
     });
     localStorage.setItem("worldClockTheme", theme);
+    updateUrlState();
+}
+
+function applyMode(mode) {
+    const resolvedMode = mode === "light" ? "light" : "dark";
+    document.body.dataset.mode = resolvedMode;
+    modeButtons.forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === resolvedMode));
+    });
+    localStorage.setItem("worldClockMode", resolvedMode);
     updateUrlState();
 }
 
@@ -1080,9 +1107,13 @@ shareButton.addEventListener("click", copyShareLink);
 themeButtons.forEach(button => {
     button.addEventListener("click", () => applyTheme(button.dataset.theme));
 });
+modeButtons.forEach(button => {
+    button.addEventListener("click", () => applyMode(button.dataset.mode));
+});
 
 applyLanguage(currentLanguage);
 applyTheme(new URLSearchParams(window.location.search).get("theme") || localStorage.getItem("worldClockTheme") || "aurora");
+applyMode(new URLSearchParams(window.location.search).get("mode") || localStorage.getItem("worldClockMode") || "dark");
 initializeMap();
 loadDateTime();
 setInterval(loadDateTime, 1000);
