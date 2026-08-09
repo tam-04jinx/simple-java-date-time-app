@@ -749,7 +749,7 @@ body[data-mode="light"] .city-picker select {
 
 .timezone-card {
     position: relative;
-    min-height: 166px;
+    min-height: 206px;
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
@@ -817,8 +817,8 @@ body[data-mode="light"] .city-picker select {
 
 .timezone-card-main {
     width: 100%;
-    min-height: 164px;
-    padding: 18px 54px 44px 18px;
+    min-height: 204px;
+    padding: 18px 54px 50px 18px;
     color: inherit;
     background: transparent;
     text-align: left;
@@ -835,6 +835,34 @@ body[data-mode="light"] .city-picker select {
     display: block;
     margin-top: 8px;
     color: var(--muted);
+}
+
+.timezone-card .solar-times,
+.selected-time .solar-times {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.timezone-card .solar-times span,
+.selected-time .solar-times span {
+    margin-top: 0;
+    padding: 7px 8px;
+    border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 750;
+}
+
+.solar-times b {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--primary);
+    font-size: 0.68rem;
+    text-transform: uppercase;
 }
 
 #refresh-button {
@@ -881,7 +909,9 @@ body[data-mode="light"] .city-picker select {
     .insight-strip,
     .planner-panel,
     .preferences-panel,
-    .timezone-grid {
+    .timezone-grid,
+    .timezone-card .solar-times,
+    .selected-time .solar-times {
         grid-template-columns: 1fr;
     }
 

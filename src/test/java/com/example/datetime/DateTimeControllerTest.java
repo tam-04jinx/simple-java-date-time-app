@@ -50,6 +50,8 @@ class DateTimeControllerTest {
         assertThat(timeZones).hasSizeGreaterThanOrEqualTo(6);
         assertThat(timeZones.get(0).city()).isNotBlank();
         assertThat(timeZones.get(0).zoneId()).isNotBlank();
+        assertThat(timeZones.get(0).latitude()).isBetween(-90.0, 90.0);
+        assertThat(timeZones.get(0).longitude()).isBetween(-180.0, 180.0);
         assertThat(timeZones.get(0).date()).isNotBlank();
         assertThat(timeZones.get(0).time()).isNotBlank();
         assertThat(timeZones.get(0).time24Hour()).isNotBlank();
@@ -58,5 +60,7 @@ class DateTimeControllerTest {
         assertThat(timeZones.get(0).dayOfWeek()).isNotBlank();
         assertThat(timeZones.get(0).dayOfYear()).isBetween(1, 366);
         assertThat(timeZones.get(0).epochSeconds()).isPositive();
+        assertThat(timeZones.get(0).sunrise()).isNotBlank();
+        assertThat(timeZones.get(0).sunset()).isNotBlank();
     }
 }
