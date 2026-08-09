@@ -185,7 +185,9 @@ const translations = {
         workOk: "Work OK",
         removeFavorite: "Remove {city} favorite",
         addFavorite: "Add {city} favorite",
-        shareCopied: "Share link copied"
+        shareCopied: "Share link copied",
+        sunrise: "Sunrise",
+        sunset: "Sunset"
     },
     es: {
         heroEyebrow: "Panel horario global en vivo",
@@ -247,7 +249,9 @@ const translations = {
         workOk: "Laboral OK",
         removeFavorite: "Quitar {city} de favoritos",
         addFavorite: "Agregar {city} a favoritos",
-        shareCopied: "Enlace copiado"
+        shareCopied: "Enlace copiado",
+        sunrise: "Amanecer",
+        sunset: "Atardecer"
     },
     fr: {
         heroEyebrow: "Tableau horaire mondial en direct",
@@ -309,7 +313,9 @@ const translations = {
         workOk: "Travail OK",
         removeFavorite: "Retirer {city} des favoris",
         addFavorite: "Ajouter {city} aux favoris",
-        shareCopied: "Lien copie"
+        shareCopied: "Lien copie",
+        sunrise: "Lever du soleil",
+        sunset: "Coucher du soleil"
     },
     hi: {
         heroEyebrow: "लाइव वैश्विक समय बोर्ड",
@@ -371,7 +377,9 @@ const translations = {
         workOk: "Work OK",
         removeFavorite: "{city} favorite हटाएं",
         addFavorite: "{city} favorite जोड़ें",
-        shareCopied: "शेयर लिंक कॉपी हुआ"
+        shareCopied: "शेयर लिंक कॉपी हुआ",
+        sunrise: "सूर्योदय",
+        sunset: "सूर्यास्त"
     },
     ja: {
         heroEyebrow: "ライブ世界タイムボード",
@@ -433,7 +441,9 @@ const translations = {
         workOk: "勤務OK",
         removeFavorite: "{city}をお気に入りから削除",
         addFavorite: "{city}をお気に入りに追加",
-        shareCopied: "共有リンクをコピーしました"
+        shareCopied: "共有リンクをコピーしました",
+        sunrise: "日の出",
+        sunset: "日の入り"
     }
 };
 
@@ -916,6 +926,7 @@ function showSelectedCity(city) {
         <strong>${timeZone.time}</strong>
         <span>${timeZone.date}</span>
         <span>${getDayPhase(timeZone.dateTime).label} · ${workWindow.label}</span>
+        ${renderSolarTimes(timeZone)}
         <small>${timeZone.zoneId}</small>
     `;
 
@@ -1019,6 +1030,7 @@ function renderTimeZones(timeZones) {
                     <strong>${timeZone.time}</strong>
                     <span>${timeZone.date}</span>
                     <span>${phase.label} · ${workWindow.label}</span>
+                    ${renderSolarTimes(timeZone)}
                     <small>${timeZone.zoneId}</small>
                 </button>
             </article>
@@ -1033,6 +1045,15 @@ function renderTimeZones(timeZones) {
     timezoneListElement.querySelectorAll(".favorite-button").forEach(button => {
         button.addEventListener("click", () => toggleFavorite(button.dataset.city));
     });
+}
+
+function renderSolarTimes(timeZone) {
+    return `
+        <span class="solar-times">
+            <span><b>${translate("sunrise")}</b> ${timeZone.sunrise}</span>
+            <span><b>${translate("sunset")}</b> ${timeZone.sunset}</span>
+        </span>
+    `;
 }
 
 function toggleFavorite(city) {
