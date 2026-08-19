@@ -42,11 +42,12 @@ const cityCoordinates = {
 };
 
 const languageLabels = {
-    en: { en: "English", es: "Spanish", fr: "French", hi: "Hindi", ja: "Japanese" },
-    es: { en: "Inglés", es: "Español", fr: "Francés", hi: "Hindi", ja: "Japonés" },
-    fr: { en: "Anglais", es: "Espagnol", fr: "Français", hi: "Hindi", ja: "Japonais" },
-    hi: { en: "अंग्रेज़ी", es: "स्पेनिश", fr: "फ़्रेंच", hi: "हिन्दी", ja: "जापानी" },
-    ja: { en: "英語", es: "スペイン語", fr: "フランス語", hi: "ヒンディー語", ja: "日本語" }
+    en: { en: "English", es: "Spanish", fr: "French", hi: "Hindi", ja: "Japanese", ko: "Korean" },
+    es: { en: "Inglés", es: "Español", fr: "Francés", hi: "Hindi", ja: "Japonés", ko: "Coreano" },
+    fr: { en: "Anglais", es: "Espagnol", fr: "Français", hi: "Hindi", ja: "Japonais", ko: "Coréen" },
+    hi: { en: "अंग्रेज़ी", es: "स्पेनिश", fr: "फ़्रेंच", hi: "हिन्दी", ja: "जापानी", ko: "कोरियाई" },
+    ja: { en: "英語", es: "スペイン語", fr: "フランス語", hi: "ヒンディー語", ja: "日本語", ko: "韓国語" },
+    ko: { en: "영어", es: "스페인어", fr: "프랑스어", hi: "힌디어", ja: "일본어", ko: "한국어" }
 };
 
 const localizedCityNames = {
@@ -121,6 +122,24 @@ const localizedCityNames = {
         Seoul: "ソウル",
         Sydney: "シドニー",
         Auckland: "オークランド"
+    },
+    ko: {
+        Austin: "오스틴",
+        "New York": "뉴욕",
+        "Los Angeles": "로스앤젤레스",
+        "Mexico City": "멕시코시티",
+        "Sao Paulo": "상파울루",
+        London: "런던",
+        Paris: "파리",
+        Cairo: "카이로",
+        Dubai: "두바이",
+        Hyderabad: "하이데라바드",
+        Singapore: "싱가포르",
+        "Hong Kong": "홍콩",
+        Tokyo: "도쿄",
+        Seoul: "서울",
+        Sydney: "시드니",
+        Auckland: "오클랜드"
     }
 };
 
@@ -444,6 +463,70 @@ const translations = {
         shareCopied: "共有リンクをコピーしました",
         sunrise: "日の出",
         sunset: "日の入り"
+    },
+    ko: {
+        heroEyebrow: "실시간 세계 시간판",
+        appTitle: "세계 시계",
+        themeAria: "색상 테마",
+        themeAurora: "오로라",
+        themeSunset: "석양",
+        themeMidnight: "자정",
+        modeAria: "표시 모드",
+        modeDark: "어둡게",
+        modeLight: "밝게",
+        serverDate: "서버 날짜",
+        serverTime: "서버 시간",
+        serverTimezone: "서버 시간대:",
+        analogClock: "아날로그 시계",
+        focusedLocationClock: "선택 위치 시계",
+        loading: "불러오는 중...",
+        refreshesEverySecond: "매초 업데이트",
+        favoriteCities: "즐겨찾는 도시",
+        copyShareLink: "공유 링크 복사",
+        autosaveStatus: "선택 항목이 자동 저장됩니다",
+        languageLabel: "언어",
+        locationLabel: "선택 위치",
+        cityPickerLabel: "지도에 표시할 도시 선택",
+        cityHelp: "여러 도시를 선택하려면 Mac에서는 Cmd, Windows에서는 Ctrl을 누르세요. 카드나 지도 핀을 클릭하면 도시가 강조됩니다.",
+        mapHeading: "지도에 선택된 도시",
+        mapAria: "인터랙티브 세계 지도",
+        legendAria: "낮과 밤 범례",
+        calculatingSunlight: "햇빛 계산 중",
+        day: "낮",
+        twilight: "황혼",
+        night: "밤",
+        mapShadow: "지도 그림자",
+        selectedTimeZones: "선택한 시간대",
+        refreshNow: "지금 새로고침",
+        mapOffline: "지도가 오프라인입니다",
+        cardsStillLive: "도시 카드는 계속 실시간으로 업데이트됩니다.",
+        sunlightStatus: "곡선형 낮/밤 경계 · 태양 위치 {latitude} {longitude}",
+        unavailable: "사용할 수 없음",
+        backendCheck: "Java 백엔드를 확인하세요",
+        unableTimeZones: "시간대를 불러올 수 없습니다.",
+        unableCityTimes: "도시 시간을 불러올 수 없습니다.",
+        selectCityPrompt: "현지 시간을 보려면 지도에서 도시를 선택하세요.",
+        selectFromDropdown: "지도에 표시할 도시를 드롭다운에서 선택하세요.",
+        favoriteEmpty: "카드를 즐겨찾기로 표시하면 여기에 고정됩니다.",
+        noCitiesSelected: "선택한 도시가 없습니다.",
+        citySingular: "도시",
+        cityPlural: "도시",
+        selected: "선택됨",
+        waitingData: "도시 데이터 대기 중",
+        meetingPending: "회의 시간 확인 대기 중",
+        addCitiesSpread: "시간 차이를 비교할 도시를 추가하세요",
+        addCitiesMeeting: "회의 정보를 보려면 도시를 추가하세요",
+        hourSpread: "선택한 도시 간 {spread}시간 차이",
+        allWorkHours: "선택한 모든 도시가 근무 시간입니다",
+        someWorkHours: "선택한 도시 중 {count}/{total}곳이 근무 시간입니다",
+        workHours: "근무 시간",
+        afterHours: "근무 외 시간",
+        workOk: "근무 가능",
+        removeFavorite: "{city} 즐겨찾기 제거",
+        addFavorite: "{city} 즐겨찾기 추가",
+        shareCopied: "공유 링크가 복사되었습니다",
+        sunrise: "일출",
+        sunset: "일몰"
     }
 };
 
