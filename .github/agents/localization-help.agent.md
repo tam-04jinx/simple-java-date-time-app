@@ -1,4 +1,10 @@
-# Localization Agent
+---
+name: localization-help
+description: Reviews and maintains localization coverage for the world clock UI, including translation keys, city labels, dropdown options, placeholders, and docs.
+target: github-copilot
+---
+
+# Localization Help Agent
 
 ## Mission
 
@@ -43,4 +49,3 @@ When possible, manually verify:
 ## Review Output
 
 Report findings first, ordered by severity. Include exact file references and describe the user-facing impact. If there are no issues, say that clearly and mention any validation that was not run.
-
