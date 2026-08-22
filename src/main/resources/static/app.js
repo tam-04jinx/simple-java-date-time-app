@@ -544,6 +544,16 @@ let worldMap;
 let cityMarkers = {};
 let mapAvailable = false;
 let daylightAnimationFrame;
+let dateTimeLoadInProgress = false;
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
 
 function loadInitialCities() {
     const sharedCities = new URLSearchParams(window.location.search).get("cities");
@@ -857,6 +867,12 @@ function toDegrees(radians) {
 }
 
 async function loadDateTime() {
+    if (dateTimeLoadInProgress) {
+        return;
+    }
+
+    dateTimeLoadInProgress = true;
+
     try {
         const [dateTimeResponse, timeZonesResponse] = await Promise.all([
             fetch("/api/datetime"),
@@ -868,7 +884,10 @@ async function loadDateTime() {
         }
 
         const dateTime = await dateTimeResponse.json();
-        latestTimeZones = await timeZonesResponse.json();
+        const timeZones = await timeZonesResponse.json();
+        const shouldRenderSelectors = latestTimeZones.length !== timeZones.length
+            || latestTimeZones.some((timeZone, index) => timeZone.city !== timeZones[index]?.city);
+        latestTimeZones = timeZones;
         selectedCities = selectedCities.filter(city => latestTimeZones.some(timeZone => timeZone.city === city));
         if (selectedCities.length === 0) {
             selectedCities = [...defaultSelectedCities];
@@ -883,8 +902,10 @@ async function loadDateTime() {
         dateElement.textContent = dateTime.date;
         timeElement.textContent = dateTime.time;
         timezoneElement.textContent = dateTime.timeZone;
-        renderCitySelect(latestTimeZones);
-        renderLocationSelect(latestTimeZones);
+        if (shouldRenderSelectors) {
+            renderCitySelect(latestTimeZones);
+            renderLocationSelect(latestTimeZones);
+        }
         syncCitySelect();
         syncLocationSelect();
         renderSelectedView();
@@ -899,14 +920,16 @@ async function loadDateTime() {
         timezoneListElement.innerHTML = `<p class='error'>${translate("unableTimeZones")}</p>`;
         selectedTimeElement.textContent = translate("unableCityTimes");
         console.error(error);
+    } finally {
+        dateTimeLoadInProgress = false;
     }
 }
 
 function renderCitySelect(timeZones) {
     citySelectElement.innerHTML = timeZones
         .map(timeZone => `
-            <option value="${timeZone.city}" ${selectedCities.includes(timeZone.city) ? "selected" : ""}>
-                ${getCityLabel(timeZone.city)}
+            <option value="${escapeHtml(timeZone.city)}" ${selectedCities.includes(timeZone.city) ? "selected" : ""}>
+                ${escapeHtml(getCityLabel(timeZone.city))}
             </option>
         `)
         .join("");
@@ -919,8 +942,8 @@ function renderLocationSelect(timeZones) {
 
     locationSelectElement.innerHTML = timeZones
         .map(timeZone => `
-            <option value="${timeZone.city}">
-                ${getCityLabel(timeZone.city)}
+            <option value="${escapeHtml(timeZone.city)}">
+                ${escapeHtml(getCityLabel(timeZone.city))}
             </option>
         `)
         .join("");
@@ -974,7 +997,7 @@ function renderMapMarkers(timeZones) {
                 icon: L.divIcon({
                     className: "day-night-marker-wrap",
                     html: `
-                        <span class="day-night-marker is-${phase.value}" aria-label="${cityLabel} is in ${phase.label.toLowerCase()}">
+                        <span class="day-night-marker is-${phase.value}" aria-label="${escapeHtml(cityLabel)} is in ${escapeHtml(phase.label.toLowerCase())}">
                             ${phase.icon}
                         </span>
                     `,
@@ -984,7 +1007,7 @@ function renderMapMarkers(timeZones) {
                 })
             })
                 .addTo(worldMap)
-                .bindTooltip(`${cityLabel}: ${timeZone.time} · ${phase.label} · ${workWindow.label}`, {
+                .bindTooltip(escapeHtml(`${cityLabel}: ${timeZone.time} · ${phase.label} · ${workWindow.label}`), {
                     direction: "top",
                     offset: [0, -12]
                 })
@@ -1005,12 +1028,12 @@ function showSelectedCity(city) {
 
     const workWindow = getWorkWindow(timeZone.dateTime);
     selectedTimeElement.innerHTML = `
-        <span class="city">${getCityLabel(timeZone.city)}</span>
-        <strong>${timeZone.time}</strong>
-        <span>${timeZone.date}</span>
-        <span>${getDayPhase(timeZone.dateTime).label} · ${workWindow.label}</span>
+        <span class="city">${escapeHtml(getCityLabel(timeZone.city))}</span>
+        <strong>${escapeHtml(timeZone.time)}</strong>
+        <span>${escapeHtml(timeZone.date)}</span>
+        <span>${escapeHtml(getDayPhase(timeZone.dateTime).label)} · ${escapeHtml(workWindow.label)}</span>
         ${renderSolarTimes(timeZone)}
-        <small>${timeZone.zoneId}</small>
+        <small>${escapeHtml(timeZone.zoneId)}</small>
     `;
 
     const marker = cityMarkers[timeZone.city];
@@ -1080,8 +1103,8 @@ function renderFavorites() {
     favoriteListElement.innerHTML = favoriteCities
         .filter(city => latestTimeZones.some(timeZone => timeZone.city === city))
         .map(city => `
-            <button class="favorite-chip" type="button" data-city="${city}">
-                ${getCityLabel(city)}
+            <button class="favorite-chip" type="button" data-city="${escapeHtml(city)}">
+                ${escapeHtml(getCityLabel(city))}
             </button>
         `)
         .join("");
@@ -1097,6 +1120,15 @@ function renderTimeZones(timeZones) {
         return;
     }
 
+    const focusedControl = document.activeElement;
+    const focusedCard = focusedControl instanceof HTMLElement
+        ? focusedControl.closest(".timezone-card")
+        : null;
+    const focusedCity = focusedCard?.dataset.city;
+    const focusedControlClass = focusedControl?.classList.contains("favorite-button")
+        ? "favorite-button"
+        : "timezone-card-main";
+
     timezoneListElement.innerHTML = timeZones
         .map(timeZone => {
             const phase = getDayPhase(timeZone.dateTime);
@@ -1104,17 +1136,17 @@ function renderTimeZones(timeZones) {
             const favorite = favoriteCities.includes(timeZone.city);
             const cityLabel = getCityLabel(timeZone.city);
             return `
-            <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${timeZone.city}" data-work-label="${workWindow.badge}">
-                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${favorite ? translate("removeFavorite", { city: cityLabel }) : translate("addFavorite", { city: cityLabel })}" data-city="${timeZone.city}">
+            <article class="timezone-card is-${phase.value} ${workWindow.friendly ? "is-work-friendly" : "is-after-hours"}" data-city="${escapeHtml(timeZone.city)}" data-work-label="${escapeHtml(workWindow.badge)}">
+                <button class="favorite-button" type="button" aria-pressed="${favorite}" aria-label="${escapeHtml(favorite ? translate("removeFavorite", { city: cityLabel }) : translate("addFavorite", { city: cityLabel }))}" data-city="${escapeHtml(timeZone.city)}">
                     ${favorite ? "★" : "☆"}
                 </button>
-                <button class="timezone-card-main" type="button" data-city="${timeZone.city}">
-                    <span class="city">${cityLabel}</span>
-                    <strong>${timeZone.time}</strong>
-                    <span>${timeZone.date}</span>
-                    <span>${phase.label} · ${workWindow.label}</span>
+                <button class="timezone-card-main" type="button" data-city="${escapeHtml(timeZone.city)}">
+                    <span class="city">${escapeHtml(cityLabel)}</span>
+                    <strong>${escapeHtml(timeZone.time)}</strong>
+                    <span>${escapeHtml(timeZone.date)}</span>
+                    <span>${escapeHtml(phase.label)} · ${escapeHtml(workWindow.label)}</span>
                     ${renderSolarTimes(timeZone)}
-                    <small>${timeZone.zoneId}</small>
+                    <small>${escapeHtml(timeZone.zoneId)}</small>
                 </button>
             </article>
         `;
@@ -1128,13 +1160,19 @@ function renderTimeZones(timeZones) {
     timezoneListElement.querySelectorAll(".favorite-button").forEach(button => {
         button.addEventListener("click", () => toggleFavorite(button.dataset.city));
     });
+
+    if (focusedCity) {
+        Array.from(timezoneListElement.querySelectorAll(`.${focusedControlClass}`))
+            .find(control => control.dataset.city === focusedCity)
+            ?.focus();
+    }
 }
 
 function renderSolarTimes(timeZone) {
     return `
         <span class="solar-times">
-            <span><b>${translate("sunrise")}</b> ${timeZone.sunrise}</span>
-            <span><b>${translate("sunset")}</b> ${timeZone.sunset}</span>
+            <span><b>${escapeHtml(translate("sunrise"))}</b> ${escapeHtml(timeZone.sunrise)}</span>
+            <span><b>${escapeHtml(translate("sunset"))}</b> ${escapeHtml(timeZone.sunset)}</span>
         </span>
     `;
 }
@@ -1187,9 +1225,13 @@ function copyShareLink() {
     const shareUrl = window.location.href;
 
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(shareUrl).then(() => {
-            shareStatusElement.textContent = translate("shareCopied");
-        });
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                shareStatusElement.textContent = translate("shareCopied");
+            })
+            .catch(() => {
+                shareStatusElement.textContent = shareUrl;
+            });
         return;
     }
 
@@ -1220,5 +1262,15 @@ applyTheme(new URLSearchParams(window.location.search).get("theme") || localStor
 applyMode(new URLSearchParams(window.location.search).get("mode") || localStorage.getItem("worldClockMode") || "dark");
 initializeMap();
 loadDateTime();
-setInterval(loadDateTime, 1000);
+setInterval(() => {
+    if (document.visibilityState === "visible") {
+        loadDateTime();
+    }
+}, 1000);
 setInterval(scheduleDaylightRender, 60000);
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        loadDateTime();
+        scheduleDaylightRender();
+    }
+});

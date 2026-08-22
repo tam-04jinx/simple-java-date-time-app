@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Java Date & Time App</title>
+    <title>World Clock</title>
+    <meta name="description" content="Compare the current time, daylight, and work hours across cities worldwide." />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css?v=202608212238-analog-clock-center" />
+    <link rel="stylesheet" href="styles.css?v=202608221210-best-practices" />
 </head>
 <body data-mode="dark">
     <main class="page">
@@ -68,7 +69,7 @@
                 <p class="timezone" id="analog-clock-caption">Loading...</p>
             </section>
 
-            <div class="insight-strip" aria-live="polite">
+            <div class="insight-strip">
                 <span id="city-count">0 cities selected</span>
                 <span id="time-spread">Waiting for city data</span>
                 <span id="meeting-window">Meeting window pending</span>
@@ -78,7 +79,7 @@
             <div class="planner-panel">
                 <div>
                     <span class="label" data-i18n="favoriteCities">Favorite cities</span>
-                    <div id="favorite-list" class="favorite-list" aria-live="polite"></div>
+                    <div id="favorite-list" class="favorite-list"></div>
                 </div>
                 <div class="share-tools">
                     <button id="share-button" type="button" data-i18n="copyShareLink">Copy Share Link</button>
@@ -114,7 +115,7 @@
             <div class="map-shell">
                 <div id="world-map" class="world-map" aria-label="Interactive world map" data-i18n-aria-label="mapAria"></div>
                 <canvas id="daylight-canvas" class="daylight-canvas" aria-hidden="true"></canvas>
-                <div class="sunlight-status" id="sunlight-status" aria-live="polite" data-i18n="calculatingSunlight">Calculating sunlight</div>
+                <div class="sunlight-status" id="sunlight-status" data-i18n="calculatingSunlight">Calculating sunlight</div>
                 <div class="map-legend" aria-label="Day and night legend" data-i18n-aria-label="legendAria">
                     <span><i class="legend-dot legend-day"></i> <b data-i18n="day">Day</b></span>
                     <span><i class="legend-dot legend-twilight"></i> <b data-i18n="twilight">Twilight</b></span>
@@ -123,18 +124,18 @@
                 </div>
             </div>
 
-            <section id="selected-time" class="selected-time" aria-live="polite">
+            <section id="selected-time" class="selected-time">
                 Select a city on the map to see the local time.
             </section>
 
             <h2 data-i18n="selectedTimeZones">Selected Time Zones</h2>
-            <div id="timezone-list" class="timezone-grid" aria-live="polite"></div>
+            <div id="timezone-list" class="timezone-grid"></div>
 
             <button id="refresh-button" type="button" data-i18n="refreshNow">Refresh Now</button>
         </section>
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=202608212238-analog-clock-center"></script>
+    <script src="app.js?v=202608221210-best-practices"></script>
 </body>
 </html>
