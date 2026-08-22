@@ -249,9 +249,9 @@ h2 {
 
 .analog-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(210px, 260px);
-    align-items: center;
-    gap: 28px;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
     margin-top: 20px;
     padding: 22px;
     border: 1px solid var(--border);
@@ -263,7 +263,7 @@ h2 {
 }
 
 .analog-panel h2 {
-    margin: 8px 0 12px;
+    margin: 0;
     color: var(--text);
     font-size: clamp(1.3rem, 3vw, 2rem);
     text-transform: none;
@@ -273,7 +273,7 @@ h2 {
     position: relative;
     width: min(260px, 66vw);
     aspect-ratio: 1;
-    justify-self: end;
+    justify-self: center;
     border: 1px solid color-mix(in srgb, var(--primary) 50%, white);
     border-radius: 50%;
     background:
