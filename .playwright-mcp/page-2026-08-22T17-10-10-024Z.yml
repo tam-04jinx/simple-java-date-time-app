@@ -1,0 +1,174 @@
+- main [ref=f2e2]:
+  - generic [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - generic [ref=f2e5]:
+        - generic [ref=f2e6]: Panel horario global en vivo
+        - heading "Reloj Mundial" [level=1] [ref=f2e7]
+      - generic [ref=f2e8]:
+        - generic "Tema de color" [ref=f2e9]:
+          - button "Aurora" [pressed] [ref=f2e10] [cursor=pointer]
+          - button "Atardecer" [ref=f2e11] [cursor=pointer]
+          - button "Medianoche" [ref=f2e12] [cursor=pointer]
+        - generic "Modo de pantalla" [ref=f2e13]:
+          - button "Oscuro" [pressed] [ref=f2e14] [cursor=pointer]
+          - button "Claro" [ref=f2e15] [cursor=pointer]
+    - generic [ref=f2e16]:
+      - generic [ref=f2e17]:
+        - generic [ref=f2e18]: Fecha del servidor
+        - strong [ref=f2e19]: Saturday, August 22, 2026
+      - generic [ref=f2e20]:
+        - generic [ref=f2e21]: Hora del servidor
+        - strong [ref=f2e22]: 12:10:09 PM
+    - paragraph [ref=f2e23]: "Zona horaria del servidor: America/Chicago"
+    - region [ref=f2e24]:
+      - heading "Reloj de ubicacion principal" [level=2] [ref=f2e25]
+      - generic [ref=f2e26]:
+        - generic [ref=f2e28]: "12"
+        - generic [ref=f2e29]: "1"
+        - generic [ref=f2e30]: "2"
+        - generic [ref=f2e31]: "3"
+        - generic [ref=f2e32]: "4"
+        - generic [ref=f2e33]: "5"
+        - generic [ref=f2e34]: "6"
+        - generic [ref=f2e35]: "7"
+        - generic [ref=f2e36]: "8"
+        - generic [ref=f2e37]: "9"
+        - generic [ref=f2e38]: "10"
+        - generic [ref=f2e39]: "11"
+      - paragraph [ref=f2e44]: Austin · 12:10:09 PM · America/Chicago
+    - generic [ref=f2e45]:
+      - generic [ref=f2e46]: 2 ciudades seleccionadas
+      - generic [ref=f2e47]: Diferencia de 7 horas entre ciudades seleccionadas
+      - generic [ref=f2e48]: 1/2 ciudades seleccionadas estan en horario laboral
+      - generic [ref=f2e49]: Se actualiza cada segundo
+    - generic [ref=f2e50]:
+      - generic [ref=f2e51]:
+        - generic [ref=f2e52]: Ciudades favoritas
+        - generic [ref=f2e53]:
+          - button "Austin" [ref=f2e54] [cursor=pointer]
+          - button "Londres" [ref=f2e55] [cursor=pointer]
+      - generic [ref=f2e56]:
+        - button "Copiar enlace" [ref=f2e57] [cursor=pointer]
+        - status [ref=f2e58]: Las selecciones se guardan automaticamente
+    - generic [ref=f2e59]:
+      - generic [ref=f2e60]:
+        - generic [ref=f2e61]: Idioma
+        - combobox "Idioma" [ref=f2e62]:
+          - option "Inglés"
+          - option "Español" [selected]
+          - option "Francés"
+          - option "Hindi"
+          - option "Japonés"
+          - option "Coreano"
+      - generic [ref=f2e63]:
+        - generic [ref=f2e64]: Ubicacion principal
+        - combobox "Ubicacion principal" [ref=f2e65]:
+          - option "Austin" [selected]
+          - option "Nueva York"
+          - option "Los Ángeles"
+          - option "Ciudad de México"
+          - option "São Paulo"
+          - option "Londres"
+          - option "París"
+          - option "El Cairo"
+          - option "Dubái"
+          - option "Hyderabad"
+          - option "Singapur"
+          - option "Hong Kong"
+          - option "Tokio"
+          - option "Seúl"
+          - option "Sídney"
+          - option "Auckland"
+    - generic [ref=f2e66]:
+      - generic [ref=f2e67]: Elige ciudades para mostrar en el mapa
+      - listbox "Elige ciudades para mostrar en el mapa" [ref=f2e68]:
+        - option "Austin" [selected] [ref=f2e69]
+        - option "Nueva York" [ref=f2e70]
+        - option "Los Ángeles" [ref=f2e71]
+        - option "Ciudad de México" [ref=f2e72]
+        - option "São Paulo" [ref=f2e73]
+        - option "Londres" [ref=f2e74]
+        - option "París" [selected] [ref=f2e75]
+        - option "El Cairo" [ref=f2e76]
+        - option "Dubái" [ref=f2e77]
+        - option "Hyderabad" [ref=f2e78]
+        - option "Singapur" [ref=f2e79]
+        - option "Hong Kong" [ref=f2e80]
+        - option "Tokio" [ref=f2e81]
+        - option "Seúl" [ref=f2e82]
+        - option "Sídney" [ref=f2e83]
+        - option "Auckland" [ref=f2e84]
+      - paragraph [ref=f2e85]: Mantén Cmd en Mac o Ctrl en Windows para seleccionar varias ciudades. Haz clic en una tarjeta o pin para destacar una ciudad.
+    - heading "Ciudades seleccionadas en el mapa" [level=2] [ref=f2e86]
+    - generic [ref=f2e87]:
+      - generic "Mapa mundial interactivo" [ref=f2e88]:
+        - generic:
+          - generic:
+            - button "Austin is in dia" [ref=f2e89] [cursor=pointer]:
+              - generic "Austin is in dia" [ref=f2e90]: ☀
+            - button "París is in crepusculo" [ref=f2e91] [cursor=pointer]:
+              - generic "París is in crepusculo" [ref=f2e92]: ◐
+          - generic:
+            - 'tooltip "Austin: 12:10:09 PM · Dia · Horario laboral"'
+        - generic:
+          - generic [ref=f2e93]:
+            - button "Zoom in" [ref=f2e94] [cursor=pointer]: +
+            - button "Zoom out" [disabled] [ref=f2e95]: −
+          - generic [ref=f2e96]:
+            - link "Leaflet" [ref=f2e97] [cursor=pointer]:
+              - /url: https://leafletjs.com
+            - text: "| © OpenStreetMap contributors"
+      - generic [ref=f2e102]: Linea curva de dia/noche · sol sobre 12°N 77°W
+      - generic "Leyenda de dia y noche" [ref=f2e103]:
+        - generic [ref=f2e104]: Dia
+        - generic [ref=f2e107]: Crepusculo
+        - generic [ref=f2e110]: Noche
+        - generic [ref=f2e113]: Sombra del mapa
+    - generic [ref=f2e116]:
+      - generic [ref=f2e117]: Austin
+      - strong [ref=f2e118]: 12:10:09 PM
+      - generic [ref=f2e119]: Saturday, August 22, 2026
+      - generic [ref=f2e120]: Dia · Horario laboral
+      - generic [ref=f2e121]:
+        - generic [ref=f2e122]:
+          - generic [ref=f2e123]: Amanecer
+          - text: 07:01:55 AM
+        - generic [ref=f2e124]:
+          - generic [ref=f2e125]: Atardecer
+          - text: 08:05:18 PM
+      - generic [ref=f2e126]: America/Chicago
+    - heading "Zonas horarias seleccionadas" [level=2] [ref=f2e127]
+    - generic [ref=f2e128]:
+      - article [ref=f2e129]:
+        - button "Quitar Austin de favoritos" [pressed] [ref=f2e130] [cursor=pointer]: ★
+        - button "Austin 12:10:09 PM Saturday, August 22, 2026 Dia · Horario laboral Amanecer 07:01:55 AM Atardecer 08:05:18 PM America/Chicago" [ref=f2e131] [cursor=pointer]:
+          - generic [ref=f2e132]: Austin
+          - strong [ref=f2e133]: 12:10:09 PM
+          - generic [ref=f2e134]: Saturday, August 22, 2026
+          - generic [ref=f2e135]: Dia · Horario laboral
+          - generic [ref=f2e136]:
+            - generic [ref=f2e137]:
+              - generic [ref=f2e138]: Amanecer
+              - text: 07:01:55 AM
+            - generic [ref=f2e139]:
+              - generic [ref=f2e140]: Atardecer
+              - text: 08:05:18 PM
+          - generic [ref=f2e141]: America/Chicago
+        - text: Laboral OK
+      - article [ref=f2e142]:
+        - button "Agregar París a favoritos" [ref=f2e143] [cursor=pointer]: ☆
+        - button "París 07:10:09 PM Saturday, August 22, 2026 Crepusculo · Fuera de horario Amanecer 06:52:28 AM Atardecer 08:53:43 PM Europe/Paris" [ref=f2e144] [cursor=pointer]:
+          - generic [ref=f2e145]: París
+          - strong [ref=f2e146]: 07:10:09 PM
+          - generic [ref=f2e147]: Saturday, August 22, 2026
+          - generic [ref=f2e148]: Crepusculo · Fuera de horario
+          - generic [ref=f2e149]:
+            - generic [ref=f2e150]:
+              - generic [ref=f2e151]: Amanecer
+              - text: 06:52:28 AM
+            - generic [ref=f2e152]:
+              - generic [ref=f2e153]: Atardecer
+              - text: 08:53:43 PM
+          - generic [ref=f2e154]: Europe/Paris
+        - text: Fuera de horario
+    - button "Actualizar ahora" [ref=f2e155] [cursor=pointer]

@@ -1,0 +1,247 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: Live global timeboard
+        - heading "World Clock" [level=1] [ref=e7]
+      - generic [ref=e8]:
+        - generic "Color theme" [ref=e9]:
+          - button "Aurora" [pressed] [ref=e10] [cursor=pointer]
+          - button "Sunset" [ref=e11] [cursor=pointer]
+          - button "Midnight" [ref=e12] [cursor=pointer]
+        - generic "Display mode" [ref=e13]:
+          - button "Dark" [pressed] [ref=e14] [cursor=pointer]
+          - button "Light" [ref=e15] [cursor=pointer]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: Server Date
+        - strong [ref=e19]: Saturday, August 22, 2026
+      - generic [ref=e20]:
+        - generic [ref=e21]: Server Time
+        - strong [ref=e22]: 12:00:59 PM
+    - paragraph [ref=e23]: "Server timezone: America/Chicago"
+    - region [ref=e24]:
+      - heading "Focused Location Clock" [level=2] [ref=e25]
+      - generic [ref=e26]:
+        - generic [ref=e28]: "12"
+        - generic [ref=e29]: "1"
+        - generic [ref=e30]: "2"
+        - generic [ref=e31]: "3"
+        - generic [ref=e32]: "4"
+        - generic [ref=e33]: "5"
+        - generic [ref=e34]: "6"
+        - generic [ref=e35]: "7"
+        - generic [ref=e36]: "8"
+        - generic [ref=e37]: "9"
+        - generic [ref=e38]: "10"
+        - generic [ref=e39]: "11"
+      - paragraph [ref=e44]: Austin · 12:00:59 PM · America/Chicago
+    - generic [ref=e45]:
+      - generic [ref=e46]: 6 cities selected
+      - generic [ref=e47]: 15 hour spread across selected cities
+      - generic [ref=e48]: 2/6 selected cities are in work hours
+      - generic [ref=e49]: Refreshes every second
+    - generic [ref=e50]:
+      - generic [ref=e51]:
+        - generic [ref=e52]: Favorite cities
+        - generic [ref=e53]:
+          - button "Austin" [ref=e54] [cursor=pointer]
+          - button "London" [ref=e55] [cursor=pointer]
+      - generic [ref=e56]:
+        - button "Copy Share Link" [ref=e57] [cursor=pointer]
+        - status [ref=e58]: Selections save automatically
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]: Language
+        - combobox "Language" [ref=e62]:
+          - option "English" [selected]
+          - option "Spanish"
+          - option "French"
+          - option "Hindi"
+          - option "Japanese"
+          - option "Korean"
+      - generic [ref=e63]:
+        - generic [ref=e64]: Focus location
+        - combobox "Focus location" [ref=e65]:
+          - option "Austin" [selected]
+          - option "New York"
+          - option "Los Angeles"
+          - option "Mexico City"
+          - option "Sao Paulo"
+          - option "London"
+          - option "Paris"
+          - option "Cairo"
+          - option "Dubai"
+          - option "Hyderabad"
+          - option "Singapore"
+          - option "Hong Kong"
+          - option "Tokyo"
+          - option "Seoul"
+          - option "Sydney"
+          - option "Auckland"
+    - generic [ref=e66]:
+      - generic [ref=e67]: Choose cities to show on the map
+      - listbox "Choose cities to show on the map" [ref=e68]:
+        - option "Austin" [selected] [ref=e69]
+        - option "New York" [selected] [ref=e70]
+        - option "Los Angeles" [ref=e71]
+        - option "Mexico City" [ref=e72]
+        - option "Sao Paulo" [ref=e73]
+        - option "London" [selected] [ref=e74]
+        - option "Paris" [ref=e75]
+        - option "Cairo" [ref=e76]
+        - option "Dubai" [ref=e77]
+        - option "Hyderabad" [selected] [ref=e78]
+        - option "Singapore" [ref=e79]
+        - option "Hong Kong" [ref=e80]
+        - option "Tokyo" [selected] [ref=e81]
+        - option "Seoul" [ref=e82]
+        - option "Sydney" [selected] [ref=e83]
+        - option "Auckland" [ref=e84]
+      - paragraph [ref=e85]: Hold Cmd on Mac or Ctrl on Windows to select multiple cities. Click a card or map pin to spotlight a city.
+    - heading "Selected cities on the map" [level=2] [ref=e86]
+    - generic [ref=e87]:
+      - generic "Interactive world map" [ref=e88]:
+        - generic:
+          - generic:
+            - button "Austin is in day" [ref=e89] [cursor=pointer]:
+              - generic "Austin is in day" [ref=e90]: ☀
+            - button "New York is in day" [ref=e91] [cursor=pointer]:
+              - generic "New York is in day" [ref=e92]: ☀
+            - button "London is in twilight" [ref=e93] [cursor=pointer]:
+              - generic "London is in twilight" [ref=e94]: ◐
+            - button "Hyderabad is in night" [ref=e95] [cursor=pointer]:
+              - generic "Hyderabad is in night" [ref=e96]: ☾
+            - button "Tokyo is in night" [ref=e97] [cursor=pointer]:
+              - generic "Tokyo is in night" [ref=e98]: ☾
+            - button "Sydney is in night" [ref=e99] [cursor=pointer]:
+              - generic "Sydney is in night" [ref=e100]: ☾
+          - generic:
+            - 'tooltip "Austin: 12:00:56 PM · Day · Work hours"'
+            - 'tooltip "Austin: 12:00:59 PM · Day · Work hours"'
+        - generic:
+          - generic [ref=e101]:
+            - button "Zoom in" [ref=e102] [cursor=pointer]: +
+            - button "Zoom out" [disabled] [ref=e103]: −
+          - generic [ref=e104]:
+            - link "Leaflet" [ref=e105] [cursor=pointer]:
+              - /url: https://leafletjs.com
+            - text: "| © OpenStreetMap contributors"
+      - generic [ref=e110]: Curved day/night line · sun over 12°N 74°W
+      - generic "Day and night legend" [ref=e111]:
+        - generic [ref=e112]: Day
+        - generic [ref=e115]: Twilight
+        - generic [ref=e118]: Night
+        - generic [ref=e121]: Map shadow
+    - generic [ref=e124]:
+      - generic [ref=e125]: Austin
+      - strong [ref=e126]: 12:00:59 PM
+      - generic [ref=e127]: Saturday, August 22, 2026
+      - generic [ref=e128]: Day · Work hours
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - generic [ref=e131]: Sunrise
+          - text: 07:01:55 AM
+        - generic [ref=e132]:
+          - generic [ref=e133]: Sunset
+          - text: 08:05:18 PM
+      - generic [ref=e134]: America/Chicago
+    - heading "Selected Time Zones" [level=2] [ref=e135]
+    - generic [ref=e136]:
+      - article [ref=e137]:
+        - button "Remove Austin favorite" [pressed] [ref=e138] [cursor=pointer]: ★
+        - button "Austin 12:00:59 PM Saturday, August 22, 2026 Day · Work hours Sunrise 07:01:55 AM Sunset 08:05:18 PM America/Chicago" [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]: Austin
+          - strong [ref=e141]: 12:00:59 PM
+          - generic [ref=e142]: Saturday, August 22, 2026
+          - generic [ref=e143]: Day · Work hours
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]: Sunrise
+              - text: 07:01:55 AM
+            - generic [ref=e147]:
+              - generic [ref=e148]: Sunset
+              - text: 08:05:18 PM
+          - generic [ref=e149]: America/Chicago
+        - text: Work OK
+      - article [ref=e150]:
+        - button "Add New York favorite" [ref=e151] [cursor=pointer]: ☆
+        - button "New York 01:00:59 PM Saturday, August 22, 2026 Day · Work hours Sunrise 06:12:54 AM Sunset 07:44:15 PM America/New_York" [ref=e152] [cursor=pointer]:
+          - generic [ref=e153]: New York
+          - strong [ref=e154]: 01:00:59 PM
+          - generic [ref=e155]: Saturday, August 22, 2026
+          - generic [ref=e156]: Day · Work hours
+          - generic [ref=e157]:
+            - generic [ref=e158]:
+              - generic [ref=e159]: Sunrise
+              - text: 06:12:54 AM
+            - generic [ref=e160]:
+              - generic [ref=e161]: Sunset
+              - text: 07:44:15 PM
+          - generic [ref=e162]: America/New_York
+        - text: Work OK
+      - article [ref=e163]:
+        - button "Remove London favorite" [pressed] [ref=e164] [cursor=pointer]: ★
+        - button "London 06:00:59 PM Saturday, August 22, 2026 Twilight · After hours Sunrise 05:56:25 AM Sunset 08:09:31 PM Europe/London" [ref=e165] [cursor=pointer]:
+          - generic [ref=e166]: London
+          - strong [ref=e167]: 06:00:59 PM
+          - generic [ref=e168]: Saturday, August 22, 2026
+          - generic [ref=e169]: Twilight · After hours
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - generic [ref=e172]: Sunrise
+              - text: 05:56:25 AM
+            - generic [ref=e173]:
+              - generic [ref=e174]: Sunset
+              - text: 08:09:31 PM
+          - generic [ref=e175]: Europe/London
+        - text: After hours
+      - article [ref=e176]:
+        - button "Add Hyderabad favorite" [ref=e177] [cursor=pointer]: ☆
+        - button "Hyderabad 10:30:59 PM Saturday, August 22, 2026 Night · After hours Sunrise 06:00:18 AM Sunset 06:37:31 PM Asia/Kolkata" [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]: Hyderabad
+          - strong [ref=e180]: 10:30:59 PM
+          - generic [ref=e181]: Saturday, August 22, 2026
+          - generic [ref=e182]: Night · After hours
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - generic [ref=e185]: Sunrise
+              - text: 06:00:18 AM
+            - generic [ref=e186]:
+              - generic [ref=e187]: Sunset
+              - text: 06:37:31 PM
+          - generic [ref=e188]: Asia/Kolkata
+        - text: After hours
+      - article [ref=e189]:
+        - button "Add Tokyo favorite" [ref=e190] [cursor=pointer]: ☆
+        - button "Tokyo 02:00:59 AM Sunday, August 23, 2026 Night · After hours Sunrise 05:05:51 AM Sunset 06:21:57 PM Asia/Tokyo" [ref=e191] [cursor=pointer]:
+          - generic [ref=e192]: Tokyo
+          - strong [ref=e193]: 02:00:59 AM
+          - generic [ref=e194]: Sunday, August 23, 2026
+          - generic [ref=e195]: Night · After hours
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - generic [ref=e198]: Sunrise
+              - text: 05:05:51 AM
+            - generic [ref=e199]:
+              - generic [ref=e200]: Sunset
+              - text: 06:21:57 PM
+          - generic [ref=e201]: Asia/Tokyo
+        - text: After hours
+      - article [ref=e202]:
+        - button "Add Sydney favorite" [ref=e203] [cursor=pointer]: ☆
+        - button "Sydney 03:00:59 AM Sunday, August 23, 2026 Night · After hours Sunrise 06:25:47 AM Sunset 05:30:33 PM Australia/Sydney" [ref=e204] [cursor=pointer]:
+          - generic [ref=e205]: Sydney
+          - strong [ref=e206]: 03:00:59 AM
+          - generic [ref=e207]: Sunday, August 23, 2026
+          - generic [ref=e208]: Night · After hours
+          - generic [ref=e209]:
+            - generic [ref=e210]:
+              - generic [ref=e211]: Sunrise
+              - text: 06:25:47 AM
+            - generic [ref=e212]:
+              - generic [ref=e213]: Sunset
+              - text: 05:30:33 PM
+          - generic [ref=e214]: Australia/Sydney
+        - text: After hours
+    - button "Refresh Now" [ref=e215] [cursor=pointer]

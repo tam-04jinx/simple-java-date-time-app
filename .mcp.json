@@ -6,6 +6,13 @@
         "-y",
         "@playwright/mcp@latest"
       ]
+    },
+    "svelte": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sveltejs/mcp@latest"
+      ]
     }
   }
 }
