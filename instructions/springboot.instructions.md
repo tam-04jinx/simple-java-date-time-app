@@ -1,68 +1,36 @@
 ---
-description: 'Guidelines for building Spring Boot base applications'
-applyTo: '**/*.java, **/*.kt'
+description: 'Spring Boot conventions for this Java world clock application'
+applyTo: '**/*.{java,kt}'
 ---
 
 # Spring Boot Development
 
-## General Instructions
+## Project Conventions
 
-- Make only high confidence suggestions when reviewing code changes.
-- Write code with good maintainability practices, including comments on why certain design decisions were made.
-- Handle edge cases and write clear exception handling.
-- For libraries or external dependencies, mention their usage and purpose in comments.
+- Target Java 17 and Maven. Do not introduce Gradle or Maven Wrapper commands.
+- Keep configuration in `src/main/resources/application.properties`.
+- The application is a single Spring Boot service. Add dependencies only when they are required by the feature.
+- Comment only non-obvious decisions or calculations; do not add comments that restate code.
 
-## Spring Boot Instructions
+## Application Design
 
-### Dependency Injection
+- `DateTimeApplication` is the application entry point.
+- `DateTimeController` owns the date/time API and the supported world-clock city data. Keep city identifiers exact because the static client uses them as join keys.
+- Preserve the `GET /api/datetime` fallback behavior for invalid, blank, and `system` time zones.
+- Preserve the response shape of `GET /api/timezones`, including server-calculated sunrise and sunset values.
+- Validate request input explicitly and return behavior consistent with the existing API rather than adding generic persistence or service layers.
+- Use records for immutable response models, following the existing controller style.
 
-- Use constructor injection for all required dependencies.
-- Declare dependency fields as `private final`.
+## Testing and Verification
 
-### Configuration
+- Extend the direct `DateTimeController` unit tests when changing API responses or time-zone behavior.
+- Extend the random-port `TestRestTemplate` health test only when health endpoint behavior changes.
+- Run the smallest relevant test while developing. Before delivery, run the CI-equivalent validation.
 
-- Use YAML files (`application.yml`) for externalized configuration.
-- Environment Profiles: Use Spring profiles for different environments (dev, test, prod)
-- Configuration Properties: Use @ConfigurationProperties for type-safe configuration binding
-- Secrets Management: Externalize secrets using environment variables or secret management systems
-
-### Code Organization
-
-- Package Structure: Organize by feature/domain rather than by layer
-- Separation of Concerns: Keep controllers thin, services focused, and repositories simple
-- Utility Classes: Make utility classes final with private constructors
-
-### Service Layer
-
-- Place business logic in `@Service`-annotated classes.
-- Services should be stateless and testable.
-- Inject repositories via the constructor.
-- Service method signatures should use domain IDs or DTOs, not expose repository entities directly unless necessary.
-
-### Logging
-
-- Use SLF4J for all logging (`private static final Logger logger = LoggerFactory.getLogger(MyClass.class);`).
-- Do not use concrete implementations (Logback, Log4j2) or `System.out.println()` directly.
-- Use parameterized logging: `logger.info("User {} logged in", userId);`.
-
-### Security & Input Handling
-
-- Use parameterized queries | Always use Spring Data JPA or `NamedParameterJdbcTemplate` to prevent SQL injection.
-- Validate request bodies and parameters using JSR-380 (`@NotNull`, `@Size`, etc.) annotations and `BindingResult`
-
-## Build and Verification
-
-- After adding or modifying code, verify the project continues to build successfully.
-- If the project uses Maven, run `mvn clean package`.
-- If the project uses Gradle, run `./gradlew build` (or `gradlew.bat build` on Windows).
-- Ensure all tests pass as part of the build.
-
-## Useful Commands
-
-| Gradle Command            | Maven Command                     | Description                                   |
-|:--------------------------|:----------------------------------|:----------------------------------------------|
-| `./gradlew bootRun`       |`./mvnw spring-boot:run`           | Run the application.                          |
-| `./gradlew build`         |`./mvnw package`                   | Build the application.                        |
-| `./gradlew test`          |`./mvnw test`                      | Run tests.                                    |
-| `./gradlew bootJar`       |`./mvnw spring-boot:repackage`     | Package the application as a JAR.             |
-| `./gradlew bootBuildImage`|`./mvnw spring-boot:build-image`   | Package the application as a container image. |
+| Task | Command |
+| --- | --- |
+| Run the application | `mvn spring-boot:run` |
+| Run the local helper | `./run-local.sh` |
+| Run all tests | `mvn test` |
+| Run CI-equivalent validation | `mvn clean verify` |
+| Build the container | `docker build -t simple-java-date-time-app .` |
