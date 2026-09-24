@@ -6,7 +6,7 @@
 - Run the full test suite: `mvn test`. Run the full CI-equivalent Maven validation: `mvn clean verify`.
 - Run one test class: `mvn -Dtest=DateTimeControllerTest test`. Run one test method: `mvn -Dtest=DateTimeControllerTest#shouldReturnRequestedTimezone test`.
 - The JavaScript client has no configured linter. For syntax validation after client or localization changes, run `node --check src/main/resources/static/app.js`.
-- Run locally with `mvn spring-boot:run` on port 8080, or `./run-local.sh`, which builds the jar if needed and defaults to port 8090. Docker Compose exposes port 8080.
+- Run locally with `mvn spring-boot:run` on port 8080, or `./run-local.sh`, which builds the jar if needed and defaults to port 8080. Docker Compose exposes port 8080.
 
 ## Architecture
 

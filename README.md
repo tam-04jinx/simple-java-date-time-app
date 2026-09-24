@@ -39,7 +39,7 @@ Then open:
 http://localhost:8080
 ```
 
-You can also use the helper script, which defaults to port `8090`:
+You can also use the helper script, which defaults to port `8080`:
 
 ```bash
 ./run-local.sh

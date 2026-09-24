@@ -747,6 +747,26 @@ body[data-mode="light"] .city-picker select {
     margin-top: 14px;
 }
 
+.selected-time .country-trivia {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+.selected-time .country-name {
+    display: block;
+    margin-top: 8px;
+    color: var(--text);
+    font-size: 1.02rem;
+    font-weight: 850;
+}
+
+.selected-time .country-fact {
+    margin: 8px 0 0;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
 .timezone-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
