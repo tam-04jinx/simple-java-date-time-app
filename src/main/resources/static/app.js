@@ -41,6 +41,85 @@ const cityCoordinates = {
     Auckland: [-36.8485, 174.7633]
 };
 
+const cityCountries = {
+    Austin: "United States",
+    "New York": "United States",
+    "Los Angeles": "United States",
+    "Mexico City": "Mexico",
+    "Sao Paulo": "Brazil",
+    London: "United Kingdom",
+    Paris: "France",
+    Cairo: "Egypt",
+    Dubai: "United Arab Emirates",
+    Hyderabad: "India",
+    Singapore: "Singapore",
+    "Hong Kong": "China",
+    Tokyo: "Japan",
+    Seoul: "South Korea",
+    Sydney: "Australia",
+    Auckland: "New Zealand"
+};
+
+const countryTriviaFacts = {
+    "United States": [
+        "It has the world's first national park, Yellowstone.",
+        "It has 63 national parks and a huge range of climates.",
+        "The U.S. has the world's largest economy by nominal GDP."
+    ],
+    Mexico: [
+        "Its capital is one of the oldest cities in the Americas.",
+        "Chocolate and chili peppers were both important in ancient Mexican cuisine."
+    ],
+    Brazil: [
+        "It is home to the Amazon rainforest and the longest coastline in South America.",
+        "Brazil has hosted both the Summer Olympics and the FIFA World Cup."
+    ],
+    "United Kingdom": [
+        "It includes four countries: England, Scotland, Wales, and Northern Ireland.",
+        "The UK has a long tradition of pubs, tea breaks, and parliamentary democracy."
+    ],
+    France: [
+        "It has more time zones than any other country in the world.",
+        "France is famous for art museums, cuisine, and historic cathedrals."
+    ],
+    Egypt: [
+        "The Nile River has shaped its civilization for thousands of years.",
+        "Egypt is home to the only surviving ancient wonder of the world: the Great Pyramid of Giza."
+    ],
+    "United Arab Emirates": [
+        "Dubai and Abu Dhabi are part of a federation of seven emirates.",
+        "The UAE is known for modern skylines set beside deep desert heritage."
+    ],
+    India: [
+        "It is the birthplace of yoga and has over 100 languages in daily use.",
+        "India has one of the world's oldest civilizations and a huge variety of cuisines."
+    ],
+    Singapore: [
+        "It is known for its gardens, hawker centres, and efficient public transit.",
+        "Singapore is a city-state with one of the busiest ports in the world."
+    ],
+    China: [
+        "It is home to the Great Wall and one of the world's oldest continuous civilizations.",
+        "China has more than 1,000 UNESCO World Heritage sites across its territory."
+    ],
+    Japan: [
+        "It has a long tradition of seasonal festivals and bullet trains.",
+        "Japan blends ancient temples, modern cities, and volcanic landscapes."
+    ],
+    "South Korea": [
+        "Seoul blends fast-paced innovation with centuries-old palaces.",
+        "South Korea is famous worldwide for K-pop, film, and design."
+    ],
+    Australia: [
+        "It is the only country that is also a continent.",
+        "Australia has coral reefs, rainforests, deserts, and alpine regions all in one country."
+    ],
+    "New Zealand": [
+        "It has more sheep than people and dramatic alpine scenery.",
+        "New Zealand is known for its fjords, mountains, and strong outdoor culture."
+    ]
+};
+
 const languageLabels = {
     en: { en: "English", es: "Spanish", fr: "French", hi: "Hindi", ja: "Japanese", ko: "Korean" },
     es: { en: "Inglés", es: "Español", fr: "Francés", hi: "Hindi", ja: "Japonés", ko: "Coreano" },
@@ -188,6 +267,8 @@ const translations = {
         selectCityPrompt: "Select a city on the map to see the local time.",
         selectFromDropdown: "Select cities from the dropdown to show them on the map.",
         favoriteEmpty: "Mark cards as favorites to pin them here.",
+        countryTriviaLabel: "Country trivia",
+        countryTriviaFallback: "Select a city to see a country trivia fact.",
         noCitiesSelected: "No cities selected.",
         citySingular: "city",
         cityPlural: "cities",
@@ -252,6 +333,8 @@ const translations = {
         selectCityPrompt: "Selecciona una ciudad en el mapa para ver la hora local.",
         selectFromDropdown: "Selecciona ciudades en el desplegable para mostrarlas en el mapa.",
         favoriteEmpty: "Marca tarjetas como favoritas para fijarlas aqui.",
+        countryTriviaLabel: "Curiosidad del pais",
+        countryTriviaFallback: "Selecciona una ciudad para ver una curiosidad del pais.",
         noCitiesSelected: "No hay ciudades seleccionadas.",
         citySingular: "ciudad",
         cityPlural: "ciudades",
@@ -316,6 +399,8 @@ const translations = {
         selectCityPrompt: "Selectionnez une ville sur la carte pour voir l'heure locale.",
         selectFromDropdown: "Selectionnez des villes dans la liste pour les afficher sur la carte.",
         favoriteEmpty: "Marquez des cartes comme favorites pour les epingler ici.",
+        countryTriviaLabel: "Anecdote sur le pays",
+        countryTriviaFallback: "Selectionnez une ville pour voir une anecdote sur le pays.",
         noCitiesSelected: "Aucune ville selectionnee.",
         citySingular: "ville",
         cityPlural: "villes",
@@ -380,6 +465,8 @@ const translations = {
         selectCityPrompt: "लोकल समय देखने के लिए मैप पर शहर चुनें।",
         selectFromDropdown: "मैप पर दिखाने के लिए dropdown से शहर चुनें।",
         favoriteEmpty: "यहां पिन करने के लिए कार्ड को favorite करें।",
+        countryTriviaLabel: "देश की जानकारी",
+        countryTriviaFallback: "देश की जानकारी देखने के लिए कोई शहर चुनें।",
         noCitiesSelected: "कोई शहर चयनित नहीं।",
         citySingular: "शहर",
         cityPlural: "शहर",
@@ -444,6 +531,8 @@ const translations = {
         selectCityPrompt: "地図で都市を選択すると現地時刻が表示されます。",
         selectFromDropdown: "地図に表示する都市をドロップダウンから選択してください。",
         favoriteEmpty: "カードをお気に入りにするとここに固定されます。",
+        countryTriviaLabel: "国の豆知識",
+        countryTriviaFallback: "国の豆知識を見るには都市を選んでください。",
         noCitiesSelected: "都市が選択されていません。",
         citySingular: "都市",
         cityPlural: "都市",
@@ -508,6 +597,8 @@ const translations = {
         selectCityPrompt: "현지 시간을 보려면 지도에서 도시를 선택하세요.",
         selectFromDropdown: "지도에 표시할 도시를 드롭다운에서 선택하세요.",
         favoriteEmpty: "카드를 즐겨찾기로 표시하면 여기에 고정됩니다.",
+        countryTriviaLabel: "나라 상식",
+        countryTriviaFallback: "나라 상식을 보려면 도시를 선택하세요.",
         noCitiesSelected: "선택한 도시가 없습니다.",
         citySingular: "도시",
         cityPlural: "도시",
@@ -545,6 +636,9 @@ let cityMarkers = {};
 let mapAvailable = false;
 let daylightAnimationFrame;
 let dateTimeLoadInProgress = false;
+let selectedTriviaCity = "";
+let selectedTriviaCountry = "";
+let selectedTriviaText = "";
 
 function escapeHtml(value) {
     return String(value)
@@ -610,6 +704,35 @@ function translate(key, values = {}) {
 
 function getCityLabel(city) {
     return localizedCityNames[currentLanguage]?.[city] || city;
+}
+
+function getCountryName(city) {
+    return cityCountries[city] || "";
+}
+
+function getCountryTrivia(city) {
+    const countryName = getCountryName(city);
+    const facts = countryTriviaFacts[countryName] || [];
+
+    if (facts.length === 0) {
+        selectedTriviaCity = city;
+        selectedTriviaCountry = countryName;
+        selectedTriviaText = "";
+        return "";
+    }
+
+    if (city === selectedTriviaCity && countryName === selectedTriviaCountry && selectedTriviaText) {
+        return selectedTriviaText;
+    }
+
+    const availableFacts = facts.filter(fact => fact !== selectedTriviaText);
+    selectedTriviaText = availableFacts.length > 0
+        ? availableFacts[Math.floor(Math.random() * availableFacts.length)]
+        : facts[0];
+    selectedTriviaCity = city;
+    selectedTriviaCountry = countryName;
+
+    return selectedTriviaText;
 }
 
 function getLanguageLabel(language) {
@@ -970,6 +1093,7 @@ function renderSelectedView() {
 
     if (!selectedTimeZones.some(timeZone => timeZone.city === selectedCity)) {
         selectedCity = selectedTimeZones[0]?.city || "";
+        selectedTriviaText = "";
     }
 
     renderFavorites();
@@ -1027,12 +1151,19 @@ function showSelectedCity(city) {
     }
 
     const workWindow = getWorkWindow(timeZone.dateTime);
+    const countryName = getCountryName(timeZone.city);
+    const countryTrivia = getCountryTrivia(timeZone.city);
     selectedTimeElement.innerHTML = `
         <span class="city">${escapeHtml(getCityLabel(timeZone.city))}</span>
         <strong>${escapeHtml(timeZone.time)}</strong>
         <span>${escapeHtml(timeZone.date)}</span>
         <span>${escapeHtml(getDayPhase(timeZone.dateTime).label)} · ${escapeHtml(workWindow.label)}</span>
         ${renderSolarTimes(timeZone)}
+        <div class="country-trivia">
+            <span class="label">${escapeHtml(translate("countryTriviaLabel"))}</span>
+            <strong class="country-name">${escapeHtml(countryName || translate("countryTriviaFallback"))}</strong>
+            <p class="country-fact">${escapeHtml(countryTrivia || translate("countryTriviaFallback"))}</p>
+        </div>
         <small>${escapeHtml(timeZone.zoneId)}</small>
     `;
 
@@ -1077,6 +1208,10 @@ function focusLocation(city, options = {}) {
     if (!city) {
         return;
     }
+
+    selectedTriviaText = "";
+    selectedTriviaCity = "";
+    selectedTriviaCountry = "";
 
     selectedCity = city;
     if (!selectedCities.includes(city)) {

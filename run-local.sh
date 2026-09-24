@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-PORT="${PORT:-8090}"
+PORT="${PORT:-8080}"
 export PORT
 
 if [ ! -f target/simple-java-date-time-app-1.0.0.jar ]; then
