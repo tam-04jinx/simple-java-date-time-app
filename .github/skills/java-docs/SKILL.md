@@ -19,7 +19,7 @@ description: 'Maintain documentation for this Java 17 Maven Spring Boot world cl
 - Describe both API endpoints when relevant:
   - `GET /api/datetime?zone=<ZoneId>` supports the server zone fallback behavior.
   - `GET /api/timezones` returns the supported world-clock city data.
-- Retain accurate local-run instructions: `mvn spring-boot:run` uses port 8080, while `./run-local.sh` defaults to port 8080.
+- Retain accurate local-run instructions: both `mvn spring-boot:run` and `./run-local.sh` use port 8080.
 
 ## Workflow
 
