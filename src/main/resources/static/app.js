@@ -21,6 +21,8 @@ const analogClockCaptionElement = document.querySelector("#analog-clock-caption"
 const analogHourHandElement = document.querySelector("#analog-hour-hand");
 const analogMinuteHandElement = document.querySelector("#analog-minute-hand");
 const analogSecondHandElement = document.querySelector("#analog-second-hand");
+const focusTriviaCountryElement = document.querySelector("#focus-trivia-country");
+const focusTriviaFactElement = document.querySelector("#focus-trivia-fact");
 
 const cityCoordinates = {
     Austin: [30.2672, -97.7431],
@@ -237,7 +239,7 @@ const translations = {
         serverTime: "Server Time",
         serverTimezone: "Server timezone:",
         analogClock: "Analog Clock",
-        focusedLocationClock: "Focused Location Clock",
+        focusedLocationClock: "Local time",
         loading: "Loading...",
         refreshesEverySecond: "Refreshes every second",
         favoriteCities: "Favorite cities",
@@ -267,8 +269,8 @@ const translations = {
         selectCityPrompt: "Select a city on the map to see the local time.",
         selectFromDropdown: "Select cities from the dropdown to show them on the map.",
         favoriteEmpty: "Mark cards as favorites to pin them here.",
-        countryTriviaLabel: "Country trivia",
-        countryTriviaFallback: "Select a city to see a country trivia fact.",
+        countryTriviaLabel: "Fun fact!",
+        countryTriviaFallback: "Choose a city to reveal something surprising.",
         noCitiesSelected: "No cities selected.",
         citySingular: "city",
         cityPlural: "cities",
@@ -303,7 +305,7 @@ const translations = {
         serverTime: "Hora del servidor",
         serverTimezone: "Zona horaria del servidor:",
         analogClock: "Reloj analogico",
-        focusedLocationClock: "Reloj de ubicacion principal",
+        focusedLocationClock: "Hora local",
         loading: "Cargando...",
         refreshesEverySecond: "Se actualiza cada segundo",
         favoriteCities: "Ciudades favoritas",
@@ -333,8 +335,8 @@ const translations = {
         selectCityPrompt: "Selecciona una ciudad en el mapa para ver la hora local.",
         selectFromDropdown: "Selecciona ciudades en el desplegable para mostrarlas en el mapa.",
         favoriteEmpty: "Marca tarjetas como favoritas para fijarlas aqui.",
-        countryTriviaLabel: "Curiosidad del pais",
-        countryTriviaFallback: "Selecciona una ciudad para ver una curiosidad del pais.",
+        countryTriviaLabel: "¿Sabías que?",
+        countryTriviaFallback: "Elige una ciudad para descubrir un dato curioso del país.",
         noCitiesSelected: "No hay ciudades seleccionadas.",
         citySingular: "ciudad",
         cityPlural: "ciudades",
@@ -369,7 +371,7 @@ const translations = {
         serverTime: "Heure serveur",
         serverTimezone: "Fuseau serveur :",
         analogClock: "Horloge analogique",
-        focusedLocationClock: "Horloge du lieu cible",
+        focusedLocationClock: "Heure locale",
         loading: "Chargement...",
         refreshesEverySecond: "Actualisation chaque seconde",
         favoriteCities: "Villes favorites",
@@ -399,8 +401,8 @@ const translations = {
         selectCityPrompt: "Selectionnez une ville sur la carte pour voir l'heure locale.",
         selectFromDropdown: "Selectionnez des villes dans la liste pour les afficher sur la carte.",
         favoriteEmpty: "Marquez des cartes comme favorites pour les epingler ici.",
-        countryTriviaLabel: "Anecdote sur le pays",
-        countryTriviaFallback: "Selectionnez une ville pour voir une anecdote sur le pays.",
+        countryTriviaLabel: "Le saviez-vous ?",
+        countryTriviaFallback: "Choisissez une ville pour découvrir un fait intéressant sur le pays.",
         noCitiesSelected: "Aucune ville selectionnee.",
         citySingular: "ville",
         cityPlural: "villes",
@@ -435,7 +437,7 @@ const translations = {
         serverTime: "सर्वर समय",
         serverTimezone: "सर्वर समय क्षेत्र:",
         analogClock: "एनालॉग घड़ी",
-        focusedLocationClock: "मुख्य स्थान की घड़ी",
+        focusedLocationClock: "स्थानीय समय",
         loading: "लोड हो रहा है...",
         refreshesEverySecond: "हर सेकंड अपडेट होता है",
         favoriteCities: "पसंदीदा शहर",
@@ -465,8 +467,8 @@ const translations = {
         selectCityPrompt: "लोकल समय देखने के लिए मैप पर शहर चुनें।",
         selectFromDropdown: "मैप पर दिखाने के लिए dropdown से शहर चुनें।",
         favoriteEmpty: "यहां पिन करने के लिए कार्ड को favorite करें।",
-        countryTriviaLabel: "देश की जानकारी",
-        countryTriviaFallback: "देश की जानकारी देखने के लिए कोई शहर चुनें।",
+        countryTriviaLabel: "क्या आप जानते हैं?",
+        countryTriviaFallback: "देश के बारे में रोचक तथ्य जानने के लिए कोई शहर चुनें।",
         noCitiesSelected: "कोई शहर चयनित नहीं।",
         citySingular: "शहर",
         cityPlural: "शहर",
@@ -501,7 +503,7 @@ const translations = {
         serverTime: "サーバー時刻",
         serverTimezone: "サーバータイムゾーン:",
         analogClock: "アナログ時計",
-        focusedLocationClock: "フォーカス地点の時計",
+        focusedLocationClock: "現地時刻",
         loading: "読み込み中...",
         refreshesEverySecond: "毎秒更新",
         favoriteCities: "お気に入り都市",
@@ -531,8 +533,8 @@ const translations = {
         selectCityPrompt: "地図で都市を選択すると現地時刻が表示されます。",
         selectFromDropdown: "地図に表示する都市をドロップダウンから選択してください。",
         favoriteEmpty: "カードをお気に入りにするとここに固定されます。",
-        countryTriviaLabel: "国の豆知識",
-        countryTriviaFallback: "国の豆知識を見るには都市を選んでください。",
+        countryTriviaLabel: "知っていましたか？",
+        countryTriviaFallback: "国の面白い豆知識を見るには都市を選んでください。",
         noCitiesSelected: "都市が選択されていません。",
         citySingular: "都市",
         cityPlural: "都市",
@@ -567,7 +569,7 @@ const translations = {
         serverTime: "서버 시간",
         serverTimezone: "서버 시간대:",
         analogClock: "아날로그 시계",
-        focusedLocationClock: "선택 위치 시계",
+        focusedLocationClock: "현지 시간",
         loading: "불러오는 중...",
         refreshesEverySecond: "매초 업데이트",
         favoriteCities: "즐겨찾는 도시",
@@ -597,8 +599,8 @@ const translations = {
         selectCityPrompt: "현지 시간을 보려면 지도에서 도시를 선택하세요.",
         selectFromDropdown: "지도에 표시할 도시를 드롭다운에서 선택하세요.",
         favoriteEmpty: "카드를 즐겨찾기로 표시하면 여기에 고정됩니다.",
-        countryTriviaLabel: "나라 상식",
-        countryTriviaFallback: "나라 상식을 보려면 도시를 선택하세요.",
+        countryTriviaLabel: "알고 있었나요?",
+        countryTriviaFallback: "나라에 대한 흥미로운 사실을 보려면 도시를 선택하세요.",
         noCitiesSelected: "선택한 도시가 없습니다.",
         citySingular: "도시",
         cityPlural: "도시",
@@ -1146,24 +1148,18 @@ function showSelectedCity(city) {
 
     if (!timeZone) {
         selectedTimeElement.textContent = latestTimeZones.length > 0 ? translate("selectFromDropdown") : translate("selectCityPrompt");
+        renderFocusTrivia();
         renderAnalogClock();
         return;
     }
 
     const workWindow = getWorkWindow(timeZone.dateTime);
-    const countryName = getCountryName(timeZone.city);
-    const countryTrivia = getCountryTrivia(timeZone.city);
     selectedTimeElement.innerHTML = `
         <span class="city">${escapeHtml(getCityLabel(timeZone.city))}</span>
         <strong>${escapeHtml(timeZone.time)}</strong>
         <span>${escapeHtml(timeZone.date)}</span>
         <span>${escapeHtml(getDayPhase(timeZone.dateTime).label)} · ${escapeHtml(workWindow.label)}</span>
         ${renderSolarTimes(timeZone)}
-        <div class="country-trivia">
-            <span class="label">${escapeHtml(translate("countryTriviaLabel"))}</span>
-            <strong class="country-name">${escapeHtml(countryName || translate("countryTriviaFallback"))}</strong>
-            <p class="country-fact">${escapeHtml(countryTrivia || translate("countryTriviaFallback"))}</p>
-        </div>
         <small>${escapeHtml(timeZone.zoneId)}</small>
     `;
 
@@ -1176,7 +1172,28 @@ function showSelectedCity(city) {
         card.classList.toggle("is-active", card.dataset.city === timeZone.city);
     });
     syncLocationSelect();
+    renderFocusTrivia(timeZone.city);
     renderAnalogClock(timeZone);
+}
+
+function renderFocusTrivia(city) {
+    if (!focusTriviaCountryElement || !focusTriviaFactElement) {
+        return;
+    }
+
+    if (!city) {
+        const fallback = translate("countryTriviaFallback");
+        focusTriviaCountryElement.textContent = fallback;
+        focusTriviaFactElement.textContent = fallback;
+        return;
+    }
+
+    const countryName = getCountryName(city);
+    const countryTrivia = getCountryTrivia(city);
+    const fallback = translate("countryTriviaFallback");
+
+    focusTriviaCountryElement.textContent = countryName || fallback;
+    focusTriviaFactElement.textContent = countryTrivia || fallback;
 }
 
 function renderAnalogClock(timeZone) {
