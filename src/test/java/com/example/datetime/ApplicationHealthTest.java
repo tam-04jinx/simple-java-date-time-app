@@ -4,11 +4,13 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 class ApplicationHealthTest {
 
     @Autowired
