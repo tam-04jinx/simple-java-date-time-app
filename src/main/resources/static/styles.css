@@ -1,5 +1,9 @@
 :root {
     color-scheme: dark;
+    --font-sans: "Manrope", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
     --background: #08111f;
     --background-panel: rgba(8, 17, 31, 0.86);
     --surface: rgba(255, 255, 255, 0.11);
@@ -97,7 +101,8 @@ body[data-mode="light"][data-theme="midnight"] {
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--font-sans);
+    line-height: 1.45;
     color: var(--text);
     background:
         linear-gradient(120deg, color-mix(in srgb, var(--primary) 18%, transparent), transparent 28%),
@@ -134,10 +139,10 @@ select:focus-visible {
 .card {
     width: min(1060px, 100%);
     padding: 32px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--border) 82%, white);
+    border-radius: var(--radius-xl);
     background: var(--background-panel);
-    box-shadow: 0 28px 72px var(--shadow);
+    box-shadow: 0 30px 88px var(--shadow);
     backdrop-filter: blur(24px) saturate(150%);
     -webkit-backdrop-filter: blur(24px) saturate(150%);
 }
@@ -170,11 +175,14 @@ h1 {
     margin: 8px 0 0;
     font-size: clamp(2.6rem, 7vw, 5rem);
     line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
 }
 
 h2 {
     margin: 30px 0 14px;
     font-size: 1rem;
+    font-weight: 800;
     color: var(--muted);
     text-transform: uppercase;
 }
@@ -191,7 +199,7 @@ h2 {
     gap: 8px;
     padding: 6px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--control-bg);
 }
 
@@ -211,9 +219,10 @@ h2 {
 .favorite-button,
 .timezone-card-main {
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 850;
+    transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
 }
 
 .theme-button,
@@ -245,8 +254,15 @@ h2 {
 .preferences-panel {
     padding: 20px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--surface);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow) 35%, transparent);
+}
+
+.datetime-panel div {
+    background:
+        linear-gradient(155deg, color-mix(in srgb, var(--panel-shine) 78%, transparent), transparent 68%),
+        var(--surface);
 }
 
 .datetime-panel .label {
@@ -270,11 +286,16 @@ h2 {
     margin-top: 0;
     padding: 22px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background:
         linear-gradient(135deg, var(--panel-shine), transparent 58%),
         var(--surface);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+#analog-clock-caption {
+    font-size: 0.92rem;
+    color: color-mix(in srgb, var(--muted) 90%, white);
 }
 
 .analog-panel h2 {
@@ -463,7 +484,7 @@ h2 {
     gap: 12px;
     padding: 22px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background:
         linear-gradient(135deg, var(--panel-shine), transparent 58%),
         var(--surface);
@@ -515,9 +536,9 @@ strong {
     align-items: center;
     padding: 10px 12px;
     border-left: 3px solid var(--accent);
-    border-radius: 6px;
+    border-radius: 10px;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
     font-weight: 750;
 }
 
@@ -546,10 +567,11 @@ strong {
 .city-picker select {
     width: 100%;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: #0f172a;
     color: var(--field-text);
     background: rgba(255, 255, 255, 0.92);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 body[data-mode="light"] .field-control select,
@@ -575,6 +597,14 @@ body[data-mode="light"] .city-picker select {
     padding: 8px 12px;
     color: var(--button-text);
     background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.theme-button:hover,
+.mode-button:hover,
+#share-button:hover,
+#refresh-button:hover,
+.favorite-chip:hover {
+    filter: brightness(1.05);
 }
 
 .favorite-empty,
@@ -612,7 +642,7 @@ body[data-mode="light"] .city-picker select {
     height: 430px;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.10);
     box-shadow: 0 18px 46px rgba(2, 6, 23, 0.24);
 }
@@ -624,7 +654,7 @@ body[data-mode="light"] .city-picker select {
     width: calc(100% - 2px);
     height: calc(100% - 2px);
     pointer-events: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     mix-blend-mode: multiply;
     opacity: 0.96;
     transition: opacity 0.5s ease;
@@ -642,7 +672,7 @@ body[data-mode="light"] .city-picker select {
     max-width: min(410px, calc(100% - 28px));
     padding: 8px 10px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
     background: var(--background-panel);
     box-shadow: 0 14px 34px rgba(2, 6, 23, 0.24);
@@ -662,7 +692,7 @@ body[data-mode="light"] .city-picker select {
     max-width: min(420px, calc(100% - 28px));
     padding: 8px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
     background: var(--background-panel);
     box-shadow: 0 14px 34px rgba(2, 6, 23, 0.24);
@@ -743,7 +773,7 @@ body[data-mode="light"] .city-picker select {
 
 .leaflet-tooltip {
     border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 8px 12px;
     color: var(--button-text);
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -788,6 +818,9 @@ body[data-mode="light"] .city-picker select {
 
 .selected-time {
     margin-top: 14px;
+    background:
+        linear-gradient(150deg, color-mix(in srgb, var(--panel-shine) 70%, transparent), transparent 62%),
+        var(--surface);
 }
 
 .selected-time .country-trivia {
@@ -820,7 +853,7 @@ body[data-mode="light"] .city-picker select {
     position: relative;
     min-height: 206px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     color: var(--text);
     background: var(--surface);
     box-shadow: 0 14px 32px rgba(2, 6, 23, 0.16);
@@ -832,6 +865,7 @@ body[data-mode="light"] .city-picker select {
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--primary) 70%, white);
     background: var(--surface-strong);
+    box-shadow: 0 18px 38px rgba(2, 6, 23, 0.24);
 }
 
 .timezone-card.is-day {
