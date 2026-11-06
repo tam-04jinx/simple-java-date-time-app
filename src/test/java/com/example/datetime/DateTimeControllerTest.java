@@ -1,9 +1,8 @@
 package com.example.datetime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 class DateTimeControllerTest {
@@ -63,4 +62,36 @@ class DateTimeControllerTest {
         assertThat(timeZones.get(0).sunrise()).isNotBlank();
         assertThat(timeZones.get(0).sunset()).isNotBlank();
     }
+
+        @Test
+        void shouldReturnLatestCountryHeadlineWhenRssIsAvailable() {
+                DateTimeController newsController = new DateTimeController(url -> """
+                                <rss>
+                                    <channel>
+                                        <item>
+                                            <title><![CDATA[Japan PM announces major economic package]]></title>
+                                        </item>
+                                    </channel>
+                                </rss>
+                                """);
+
+                DateTimeController.NewsHeadlineResponse response = newsController.getCountryNews("Japan");
+
+                assertThat(response.country()).isEqualTo("Japan");
+                assertThat(response.headline()).isEqualTo("Japan PM announces major economic package");
+                assertThat(response.unavailable()).isFalse();
+        }
+
+        @Test
+        void shouldMarkHeadlineUnavailableWhenRssFails() {
+                DateTimeController newsController = new DateTimeController(url -> {
+                        throw new RuntimeException("feed unavailable");
+                });
+
+                DateTimeController.NewsHeadlineResponse response = newsController.getCountryNews("India");
+
+                assertThat(response.country()).isEqualTo("India");
+                assertThat(response.headline()).isBlank();
+                assertThat(response.unavailable()).isTrue();
+        }
 }

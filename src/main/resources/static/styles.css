@@ -491,25 +491,34 @@ h2 {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
-.focus-trivia-panel h2 {
+.focus-trivia-panel .label {
     margin: 0;
-    color: var(--text);
-    font-size: clamp(1.3rem, 3vw, 2rem);
-    text-transform: none;
+    color: var(--primary);
 }
 
-.focus-trivia-panel .country-name {
-    margin-top: 2px;
-    color: var(--text);
-    font-size: clamp(1.2rem, 2vw, 1.6rem);
-    font-weight: 850;
-    line-height: 1.25;
+.focus-trivia-panel #focus-trivia-country {
+    margin: 0;
 }
 
 .focus-trivia-panel .country-fact {
     margin: 0;
     color: var(--muted);
     line-height: 1.6;
+}
+
+.focus-news {
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    display: grid;
+    gap: 8px;
+}
+
+.focus-news-headline {
+    margin: 0;
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.5;
 }
 
 strong {

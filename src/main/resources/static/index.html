@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css?v=202611061955-style-polish-pass2" />
+    <link rel="stylesheet" href="styles.css?v=202611062045-fun-fact-style-match" />
 </head>
 <body data-mode="dark">
     <main class="page">
@@ -74,9 +74,16 @@
                 </section>
 
                 <aside class="focus-trivia-panel" aria-live="polite">
-                    <h2 data-i18n="countryTriviaLabel">Fun fact!</h2>
-                    <strong id="focus-trivia-country" class="country-name" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</strong>
-                    <p id="focus-trivia-fact" class="country-fact" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</p>
+                    <div class="focus-news">
+                        <h3 class="label" data-i18n="countryTriviaLabel">Fun fact!</h3>
+                        <p id="focus-trivia-country" class="focus-news-headline" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</p>
+                        <p id="focus-trivia-fact" class="country-fact" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</p>
+                    </div>
+                    <div class="focus-news">
+                        <h3 class="label" data-i18n="localNewsLabel">Local news</h3>
+                        <p id="focus-news-status" class="country-fact" data-i18n="localNewsFallback">Choose a city to see the latest local headline.</p>
+                        <p id="focus-news-headline" class="focus-news-headline" data-i18n="loading">Loading...</p>
+                    </div>
                 </aside>
             </div>
 
@@ -147,6 +154,6 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=202611061055-fun-fact-copy"></script>
+    <script src="app.js?v=202611062030-local-news-headline"></script>
 </body>
 </html>

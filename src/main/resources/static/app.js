@@ -23,6 +23,8 @@ const analogMinuteHandElement = document.querySelector("#analog-minute-hand");
 const analogSecondHandElement = document.querySelector("#analog-second-hand");
 const focusTriviaCountryElement = document.querySelector("#focus-trivia-country");
 const focusTriviaFactElement = document.querySelector("#focus-trivia-fact");
+const focusNewsStatusElement = document.querySelector("#focus-news-status");
+const focusNewsHeadlineElement = document.querySelector("#focus-news-headline");
 
 const cityCoordinates = {
     Austin: [30.2672, -97.7431],
@@ -271,6 +273,11 @@ const translations = {
         favoriteEmpty: "Mark cards as favorites to pin them here.",
         countryTriviaLabel: "Fun fact!",
         countryTriviaFallback: "Choose a city to reveal something surprising.",
+        localNewsLabel: "Local news",
+        localNewsFallback: "Choose a city to see the latest local headline.",
+        localNewsLoading: "Loading latest headline from {country}...",
+        localNewsStatus: "Top stories from {country}",
+        localNewsUnavailable: "Latest headline is unavailable right now.",
         noCitiesSelected: "No cities selected.",
         citySingular: "city",
         cityPlural: "cities",
@@ -337,6 +344,11 @@ const translations = {
         favoriteEmpty: "Marca tarjetas como favoritas para fijarlas aqui.",
         countryTriviaLabel: "¿Sabías que?",
         countryTriviaFallback: "Elige una ciudad para descubrir un dato curioso del país.",
+        localNewsLabel: "Noticias locales",
+        localNewsFallback: "Elige una ciudad para ver el titular local más reciente.",
+        localNewsLoading: "Cargando el último titular de {country}...",
+        localNewsStatus: "Titulares de {country}",
+        localNewsUnavailable: "El último titular no está disponible ahora.",
         noCitiesSelected: "No hay ciudades seleccionadas.",
         citySingular: "ciudad",
         cityPlural: "ciudades",
@@ -403,6 +415,11 @@ const translations = {
         favoriteEmpty: "Marquez des cartes comme favorites pour les epingler ici.",
         countryTriviaLabel: "Le saviez-vous ?",
         countryTriviaFallback: "Choisissez une ville pour découvrir un fait intéressant sur le pays.",
+        localNewsLabel: "Actualités locales",
+        localNewsFallback: "Choisissez une ville pour voir le dernier titre local.",
+        localNewsLoading: "Chargement du dernier titre de {country}...",
+        localNewsStatus: "Titres de {country}",
+        localNewsUnavailable: "Le dernier titre est indisponible pour le moment.",
         noCitiesSelected: "Aucune ville selectionnee.",
         citySingular: "ville",
         cityPlural: "villes",
@@ -469,6 +486,11 @@ const translations = {
         favoriteEmpty: "यहां पिन करने के लिए कार्ड को favorite करें।",
         countryTriviaLabel: "क्या आप जानते हैं?",
         countryTriviaFallback: "देश के बारे में रोचक तथ्य जानने के लिए कोई शहर चुनें।",
+        localNewsLabel: "स्थानीय समाचार",
+        localNewsFallback: "ताज़ा स्थानीय हेडलाइन देखने के लिए कोई शहर चुनें।",
+        localNewsLoading: "{country} से ताज़ा हेडलाइन लोड हो रही है...",
+        localNewsStatus: "{country} की प्रमुख खबरें",
+        localNewsUnavailable: "ताज़ा हेडलाइन अभी उपलब्ध नहीं है।",
         noCitiesSelected: "कोई शहर चयनित नहीं।",
         citySingular: "शहर",
         cityPlural: "शहर",
@@ -535,6 +557,11 @@ const translations = {
         favoriteEmpty: "カードをお気に入りにするとここに固定されます。",
         countryTriviaLabel: "知っていましたか？",
         countryTriviaFallback: "国の面白い豆知識を見るには都市を選んでください。",
+        localNewsLabel: "現地ニュース",
+        localNewsFallback: "最新の現地見出しを見るには都市を選択してください。",
+        localNewsLoading: "{country} の最新見出しを読み込み中...",
+        localNewsStatus: "{country} のトップニュース",
+        localNewsUnavailable: "最新見出しは現在利用できません。",
         noCitiesSelected: "都市が選択されていません。",
         citySingular: "都市",
         cityPlural: "都市",
@@ -601,6 +628,11 @@ const translations = {
         favoriteEmpty: "카드를 즐겨찾기로 표시하면 여기에 고정됩니다.",
         countryTriviaLabel: "알고 있었나요?",
         countryTriviaFallback: "나라에 대한 흥미로운 사실을 보려면 도시를 선택하세요.",
+        localNewsLabel: "현지 뉴스",
+        localNewsFallback: "최신 현지 헤드라인을 보려면 도시를 선택하세요.",
+        localNewsLoading: "{country}의 최신 헤드라인을 불러오는 중...",
+        localNewsStatus: "{country} 주요 뉴스",
+        localNewsUnavailable: "최신 헤드라인을 지금 불러올 수 없습니다.",
         noCitiesSelected: "선택한 도시가 없습니다.",
         citySingular: "도시",
         cityPlural: "도시",
@@ -641,6 +673,8 @@ let dateTimeLoadInProgress = false;
 let selectedTriviaCity = "";
 let selectedTriviaCountry = "";
 let selectedTriviaText = "";
+const newsHeadlineCache = new Map();
+const loadingNewsCountries = new Set();
 
 function escapeHtml(value) {
     return String(value)
@@ -1185,6 +1219,7 @@ function renderFocusTrivia(city) {
         const fallback = translate("countryTriviaFallback");
         focusTriviaCountryElement.textContent = fallback;
         focusTriviaFactElement.textContent = fallback;
+        renderFocusNews();
         return;
     }
 
@@ -1194,6 +1229,57 @@ function renderFocusTrivia(city) {
 
     focusTriviaCountryElement.textContent = countryName || fallback;
     focusTriviaFactElement.textContent = countryTrivia || fallback;
+    renderFocusNews(countryName);
+}
+
+function renderFocusNews(countryName) {
+    if (!focusNewsStatusElement || !focusNewsHeadlineElement) {
+        return;
+    }
+
+    if (!countryName) {
+        focusNewsStatusElement.textContent = translate("localNewsFallback");
+        focusNewsHeadlineElement.textContent = translate("loading");
+        return;
+    }
+
+    focusNewsStatusElement.textContent = translate("localNewsStatus", { country: countryName });
+
+    if (newsHeadlineCache.has(countryName)) {
+        const headline = newsHeadlineCache.get(countryName);
+        focusNewsHeadlineElement.textContent = headline || translate("localNewsUnavailable");
+        return;
+    }
+
+    focusNewsHeadlineElement.textContent = translate("localNewsLoading", { country: countryName });
+    fetchLatestHeadlineForCountry(countryName);
+}
+
+async function fetchLatestHeadlineForCountry(countryName) {
+    if (!countryName || loadingNewsCountries.has(countryName)) {
+        return;
+    }
+
+    loadingNewsCountries.add(countryName);
+
+    try {
+        const response = await fetch(`/api/news?country=${encodeURIComponent(countryName)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const headline = typeof payload.headline === "string" ? payload.headline.trim() : "";
+        newsHeadlineCache.set(countryName, headline);
+    } catch (error) {
+        newsHeadlineCache.set(countryName, "");
+    } finally {
+        loadingNewsCountries.delete(countryName);
+        const focusedCountry = getCountryName(selectedCity);
+        if (focusedCountry === countryName) {
+            renderFocusNews(countryName);
+        }
+    }
 }
 
 function renderAnalogClock(timeZone) {

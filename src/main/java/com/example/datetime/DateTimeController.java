@@ -1,6 +1,13 @@
 package com.example.datetime;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -8,6 +15,9 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +30,57 @@ public class DateTimeController {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm:ss a");
     private static final DateTimeFormatter TIME_24_HOUR_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final double ZENITH = 90.833;
+    private static final Map<String, String> COUNTRY_NEWS_REGIONS = Map.ofEntries(
+            Map.entry("United States", "US"),
+            Map.entry("Mexico", "MX"),
+            Map.entry("Brazil", "BR"),
+            Map.entry("United Kingdom", "GB"),
+            Map.entry("France", "FR"),
+            Map.entry("Egypt", "EG"),
+            Map.entry("United Arab Emirates", "AE"),
+            Map.entry("India", "IN"),
+            Map.entry("Singapore", "SG"),
+            Map.entry("China", "CN"),
+            Map.entry("Japan", "JP"),
+            Map.entry("South Korea", "KR"),
+            Map.entry("Australia", "AU"),
+            Map.entry("New Zealand", "NZ")
+    );
+    private static final Pattern ITEM_BLOCK_PATTERN = Pattern.compile("<item>(.*?)</item>", Pattern.DOTALL);
+    private static final Pattern TITLE_CDATA_PATTERN = Pattern.compile("<title><!\\[CDATA\\[(.*?)]]></title>", Pattern.DOTALL);
+    private static final Pattern TITLE_PATTERN = Pattern.compile("<title>(.*?)</title>", Pattern.DOTALL);
+
+    private final NewsRssFetcher newsRssFetcher;
+
+    public DateTimeController() {
+        this(createDefaultNewsRssFetcher());
+    }
+
+    private static NewsRssFetcher createDefaultNewsRssFetcher() {
+        HttpClient newsHttpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(3))
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .build();
+
+        return url -> {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                    .timeout(Duration.ofSeconds(3))
+                .header("User-Agent", "Mozilla/5.0")
+                    .header("Accept", "application/rss+xml, application/xml;q=0.9, */*;q=0.8")
+                .header("Accept-Language", "en-US,en;q=0.9")
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = newsHttpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() >= 200 && response.statusCode() < 300
+                ? response.body()
+                : "";
+        };
+    }
+
+    DateTimeController(NewsRssFetcher newsRssFetcher) {
+        this.newsRssFetcher = newsRssFetcher;
+    }
 
     @GetMapping("/api/datetime")
     public DateTimeResponse getCurrentDateTime(@RequestParam(defaultValue = "system") String zone) {
@@ -60,6 +121,68 @@ public class DateTimeController {
                 createTimeZoneResponse("Sydney", "Australia/Sydney", -33.8688, 151.2093),
                 createTimeZoneResponse("Auckland", "Pacific/Auckland", -36.8485, 174.7633)
         );
+    }
+
+    @GetMapping("/api/news")
+    public NewsHeadlineResponse getCountryNews(@RequestParam(defaultValue = "") String country) {
+        if (country == null || country.isBlank()) {
+            return new NewsHeadlineResponse("", "", true);
+        }
+
+        String normalizedCountry = country.trim();
+        String headline = fetchLatestCountryHeadline(normalizedCountry);
+        return new NewsHeadlineResponse(normalizedCountry, headline, headline.isBlank());
+    }
+
+    private String fetchLatestCountryHeadline(String country) {
+        String region = COUNTRY_NEWS_REGIONS.getOrDefault(country, "US");
+        String query = URLEncoder.encode(country, StandardCharsets.UTF_8);
+        String feedUrl = "https://news.google.com/rss/search?q=" + query
+                + "&hl=en-US&gl=" + region + "&ceid=" + region + ":en";
+
+        try {
+            String rss = newsRssFetcher.fetch(feedUrl);
+            return extractFirstHeadline(rss);
+        } catch (Exception exception) {
+            return "";
+        }
+    }
+
+    private String extractFirstHeadline(String rss) {
+        if (rss == null || rss.isBlank()) {
+            return "";
+        }
+
+        Matcher itemMatcher = ITEM_BLOCK_PATTERN.matcher(rss);
+        if (!itemMatcher.find()) {
+            return "";
+        }
+
+        String item = itemMatcher.group(1);
+        Matcher cdataTitleMatcher = TITLE_CDATA_PATTERN.matcher(item);
+        if (cdataTitleMatcher.find()) {
+            return sanitizeHeadline(cdataTitleMatcher.group(1));
+        }
+
+        Matcher titleMatcher = TITLE_PATTERN.matcher(item);
+        if (titleMatcher.find()) {
+            return sanitizeHeadline(decodeXmlEntities(titleMatcher.group(1)));
+        }
+
+        return "";
+    }
+
+    private String sanitizeHeadline(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String decodeXmlEntities(String value) {
+        return value
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'");
     }
 
     private ZoneSelection resolveZone(String zone) {
@@ -189,7 +312,18 @@ public class DateTimeController {
             String sunset
     ) {}
 
+    public record NewsHeadlineResponse(
+            String country,
+            String headline,
+            boolean unavailable
+    ) {}
+
     private record ZoneSelection(ZoneId zoneId, boolean fallback) {}
 
     private record SolarTimes(String sunrise, String sunset) {}
+
+    @FunctionalInterface
+    interface NewsRssFetcher {
+        String fetch(String url) throws Exception;
+    }
 }

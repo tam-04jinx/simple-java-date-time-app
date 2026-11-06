@@ -108,3 +108,22 @@ The application reads the `PORT` environment variable when one is provided. Othe
 ## Repository Governance
 
 This repository includes CODEOWNERS, issue templates, a pull request template, a license, CI validation, and a manual release workflow.
+
+## Branching Workflow (Default)
+
+To keep `master` stable, use this default flow for every change:
+
+1. Create a new feature branch from `master`.
+2. Make and validate changes on that feature branch.
+3. Open a pull request into `master`.
+4. Merge only after required checks pass.
+
+Example:
+
+```bash
+git checkout master
+git pull --ff-only origin master
+git checkout -b feature/my-change
+```
+
+This is the recommended default behavior for UI, backend, and workflow updates.
