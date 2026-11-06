@@ -6,7 +6,7 @@
     <title>World Clock</title>
     <meta name="description" content="Compare the current time, daylight, and work hours across cities worldwide." />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css?v=202609231000-country-trivia" />
+    <link rel="stylesheet" href="styles.css?v=202611061048-local-time-trivia-layout" />
 </head>
 <body data-mode="dark">
     <main class="page">
@@ -45,29 +45,37 @@
                 <span data-i18n="serverTimezone">Server timezone:</span> <span id="timezone">Loading...</span>
             </p>
 
-            <section class="analog-panel" aria-labelledby="analog-clock-heading">
-                <h2 id="analog-clock-heading" data-i18n="focusedLocationClock">Focused Location Clock</h2>
-                <div class="analog-clock" aria-hidden="true">
-                    <span class="clock-minute-ring"></span>
-                    <div class="clock-number number-12">12</div>
-                    <div class="clock-number number-1">1</div>
-                    <div class="clock-number number-2">2</div>
-                    <div class="clock-number number-3">3</div>
-                    <div class="clock-number number-4">4</div>
-                    <div class="clock-number number-5">5</div>
-                    <div class="clock-number number-6">6</div>
-                    <div class="clock-number number-7">7</div>
-                    <div class="clock-number number-8">8</div>
-                    <div class="clock-number number-9">9</div>
-                    <div class="clock-number number-10">10</div>
-                    <div class="clock-number number-11">11</div>
-                    <span class="clock-hand hour-hand" id="analog-hour-hand"></span>
-                    <span class="clock-hand minute-hand" id="analog-minute-hand"></span>
-                    <span class="clock-hand second-hand" id="analog-second-hand"></span>
-                    <span class="clock-center"></span>
-                </div>
-                <p class="timezone" id="analog-clock-caption">Loading...</p>
-            </section>
+            <div class="focus-layout">
+                <section class="analog-panel" aria-labelledby="analog-clock-heading">
+                    <h2 id="analog-clock-heading" data-i18n="focusedLocationClock">Local time</h2>
+                    <div class="analog-clock" aria-hidden="true">
+                        <span class="clock-minute-ring"></span>
+                        <div class="clock-number number-12">12</div>
+                        <div class="clock-number number-1">1</div>
+                        <div class="clock-number number-2">2</div>
+                        <div class="clock-number number-3">3</div>
+                        <div class="clock-number number-4">4</div>
+                        <div class="clock-number number-5">5</div>
+                        <div class="clock-number number-6">6</div>
+                        <div class="clock-number number-7">7</div>
+                        <div class="clock-number number-8">8</div>
+                        <div class="clock-number number-9">9</div>
+                        <div class="clock-number number-10">10</div>
+                        <div class="clock-number number-11">11</div>
+                        <span class="clock-hand hour-hand" id="analog-hour-hand"></span>
+                        <span class="clock-hand minute-hand" id="analog-minute-hand"></span>
+                        <span class="clock-hand second-hand" id="analog-second-hand"></span>
+                        <span class="clock-center"></span>
+                    </div>
+                    <p class="timezone" id="analog-clock-caption">Loading...</p>
+                </section>
+
+                <aside class="focus-trivia-panel" aria-live="polite">
+                    <h2 data-i18n="countryTriviaLabel">Fun fact!</h2>
+                    <strong id="focus-trivia-country" class="country-name" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</strong>
+                    <p id="focus-trivia-fact" class="country-fact" data-i18n="countryTriviaFallback">Choose a city to reveal something surprising.</p>
+                </aside>
+            </div>
 
             <div class="insight-strip">
                 <span id="city-count">0 cities selected</span>
@@ -136,6 +144,6 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=202609231000-country-trivia"></script>
+    <script src="app.js?v=202611061055-fun-fact-copy"></script>
 </body>
 </html>
